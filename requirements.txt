@@ -1,0 +1,10 @@
+Django==5.2
+djangorestframework
+psycopg2-binary==2.9.7  # if you plan to use PostgreSQL
+assemblyai
+openai
+django-cors-headers
+celery[redis]
+boto3 
+django-storages
+requests
