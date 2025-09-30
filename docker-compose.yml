@@ -18,6 +18,9 @@ services:
     command: python backend/manage.py runserver 0.0.0.0:8000
     volumes:
       - ./backend:/app/backend
+      - ./staticfiles:/app/backend/staticfiles
+      - ./media:/app/backend/media
+
     ports:
       - "8000:8000"
     environment:
