@@ -33,6 +33,7 @@ services:
       - BOTO3_ARVAN_SECRET_KEY=798bb8ad2e09b10b4881332f1db9dff7fcef2499e93ecc5025b8508bfb67f1a4
       - ARVAN_S3_DOMAIN=https://enhubs23.s3.ir-thr-at1.arvanstorage.ir
       - ARVAN_S3_BUCKET=enhubs23
+      - ALLOWED_HOSTS=['185.204.197.117','localhost','127.0.0.1']
     depends_on:
       - db
       - redis
