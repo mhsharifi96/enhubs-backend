@@ -3,8 +3,8 @@ services:
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
+      POSTGRES_USER: enhubsadmin
+      POSTGRES_PASSWORD: alkdflkaflkjadlkfjajdklfl234@@
       POSTGRES_DB: mydb
     ports:
       - "5432:5432"
@@ -22,8 +22,8 @@ services:
       - "8000:8000"
     environment:
       - POSTGRES_DB=mydb
-      - POSTGRES_USER=myuser
-      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_USER=enhubuser
+      - POSTGRES_PASSWORD=MMsjdlfjsdfMM@123@
       - POSTGRES_HOST=db
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
@@ -50,8 +50,8 @@ services:
       - redis
     environment:
       - POSTGRES_DB=mydb
-      - POSTGRES_USER=myuser
-      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_USER=enhubuser
+      - POSTGRES_PASSWORD=MMsjdlfjsdfMM@123@
       - POSTGRES_HOST=db
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
