@@ -18,7 +18,9 @@ def get_transcribe_audio(audio_src: str):
     """
 
     config = aai.TranscriptionConfig(speech_model=aai.SpeechModel.universal)
-    transcriber = aai.Transcriber(config=config,http_client=aai.http.HttpClient(timeout=180))
+    client = aai.Client(api_key=aai.settings.api_key, request_timeout=180)
+
+    transcriber = aai.Transcriber(config=config,http_client=client)
     transcript = transcriber.transcribe(audio_src)
     print('transcript::::::',transcript)
     if transcript.status == "error":
