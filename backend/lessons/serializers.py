@@ -17,7 +17,7 @@ class AudioSerializer(serializers.ModelSerializer):
             "audio_src",
             "uploaded_url",
             "transcript",
-            "raw_transcript"
+            "raw_transcript",
             "notes",
             "vocabulary_items",
         ]
