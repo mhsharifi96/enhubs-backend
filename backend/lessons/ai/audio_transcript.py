@@ -3,7 +3,7 @@ import assemblyai as aai
 
 aai.settings.api_key = "955dcef15e0a47459ab11470d2c5eadb"
 
-def get_transcribe_audio(audio_src: str) -> str:
+def get_transcribe_audio(audio_src: str):
     """
     Transcribes an audio file (local or URL) using AssemblyAI.
 
@@ -24,7 +24,8 @@ def get_transcribe_audio(audio_src: str) -> str:
     if transcript.status == "error":
         raise RuntimeError(f"Transcription failed: {transcript.error}")
     
-    return transcript.text
+    return transcript.text, transcript.export_subtitles_vtt()
+
 
 
 

@@ -38,6 +38,7 @@ def extract_important_notes(text: str, model: str = "gpt-4o-mini") -> str:
                         "You are an expert English teacher that helps students learn English effectively and improve their language skills to C1 level."
                         "you imagine my level B1 or lower."
                         "From the given text, extract all important grammar rules or  phrases; and vocabulary notes. "
+                        "IMPORTANT : Translate at least ten words."
                         "Organize the output clearly in JSON format exactly as specified. "
                         "Do not include any text outside the JSON object. "
                         "\n\nJSON format example:\n"

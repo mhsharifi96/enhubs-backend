@@ -15,7 +15,7 @@ STEP_ORDER = [
     PostStatus.DOWNLOAD,
     PostStatus.UPLOAD,
     PostStatus.TRANSCRIBE,
-    PostStatus.FORMAT_TEXT,
+    # PostStatus.FORMAT_TEXT,
     PostStatus.EXTRACT_NOTE,
     PostStatus.ENABLE,
 ]
@@ -65,13 +65,13 @@ def download_and_upload_audio(audio: Audio):
 def transcribe_audio(audio: Audio):
 
     if not audio.raw_transcript and audio.audio_src:
-        audio.raw_transcript = get_transcribe_audio(audio.audio_src)
+        audio.raw_transcript , audio.transcript = get_transcribe_audio(audio.audio_src)
     audio.status = PostStatus.TRANSCRIBE
     audio.save()
 
 def format_audio_text(audio: Audio):
     if not audio.transcript and audio.raw_transcript:
-        audio.transcript = clean_text(audio.raw_transcript)
+        audio.raw_transcript = clean_text(audio.raw_transcript)
     audio.status = PostStatus.FORMAT_TEXT
     audio.save()
 
@@ -101,7 +101,7 @@ STEP_ACTIONS = {
     PostStatus.DOWNLOAD: download_and_upload_audio,
     PostStatus.UPLOAD: download_and_upload_audio,
     PostStatus.TRANSCRIBE: transcribe_audio,
-    PostStatus.FORMAT_TEXT: format_audio_text,
+    # PostStatus.FORMAT_TEXT: format_audio_text,
     PostStatus.EXTRACT_NOTE: extract_audio_notes,
     PostStatus.ENABLE: enable_audio,
 }
