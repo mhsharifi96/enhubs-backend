@@ -17,13 +17,23 @@ def get_transcribe_audio(audio_src: str):
         RuntimeError: If transcription fails.
     """
 
-    config = aai.TranscriptionConfig(speech_model=aai.SpeechModel.universal)
-    client = aai.Client(request_timeout=180)
 
-    transcriber = aai.Transcriber(config=config,http_client=client)
-    transcript = transcriber.transcribe(audio_src)
-    print('transcript::::::',transcript)
-    if transcript.status == "error":
+    config = aai.TranscriptionConfig(
+    # speaker_labels=True,
+    # format_text=True,
+    # punctuate=True,
+    speech_model=aai.SpeechModel.universal,
+    language_detection=True
+    )
+
+    transcriber = aai.Transcriber(config=config)
+    # transcript = transcriber.transcribe(audio_src)
+    transcript = transcriber.submit(audio_src)
+    # Wait for the transcription to complete
+    transcript.wait_for_completion()
+
+    print('transcript::::::')
+    if transcript.status == aai.TranscriptStatus.error:
         raise RuntimeError(f"Transcription failed: {transcript.error}")
     
     return transcript.text, transcript.export_subtitles_vtt()
