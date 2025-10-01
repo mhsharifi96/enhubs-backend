@@ -11,5 +11,5 @@ class AudioAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
-        if obj.audio_src and obj.status != PostStatus.ENABLE :  # only trigger if audio exists and not already ENABLE
+        if obj.audio_src and (obj.status != PostStatus.ENABLE or obj.status != PostStatus.DISABLE) :  # only trigger if audio exists and not already ENABLE
             process_audio.delay(obj.id)
