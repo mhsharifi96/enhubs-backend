@@ -65,7 +65,7 @@ def download_and_upload_audio(audio: Audio):
 def transcribe_audio(audio: Audio):
 
     if not audio.raw_transcript and audio.audio_src:
-        audio.raw_transcript , audio.transcript = get_transcribe_audio(audio.audio_src)
+        audio.raw_transcript , audio.transcript = get_transcribe_audio(audio.uploaded_url)
     audio.status = PostStatus.TRANSCRIBE
     audio.save()
 
