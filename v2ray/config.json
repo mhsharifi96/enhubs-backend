@@ -1,0 +1,179 @@
+{
+  "log": {},
+  "inbounds": [
+      {
+        "port": 10808,
+        "protocol": "shadowsocks",
+        "tag": "socks",
+        "settings": {
+          "method": "chacha20-ietf-poly1305",
+          "ota": true,
+          "network": "tcp,udp",
+          "level": 8,
+          "udp": false,
+          "password": "123456"
+        },
+        "listen": "127.0.0.1"
+      },
+      {
+        "settings": {
+          "userLevel": 8,
+          "auth": "noauth",
+          "udp": true
+        },
+        "tag": "directSocks",
+        "protocol": "socks",
+        "listen": "127.0.0.1",
+        "port": 1087
+      },
+      {
+        "settings": {
+          "address": "[::1]"
+        },
+        "tag": "api",
+        "protocol": "dokodemo-door",
+        "listen": "[::1]",
+        "port": 62789
+      },
+      {
+        "settings": {
+          "userLevel": 0,
+          "network": "tcp,udp",
+          "port": 53,
+          "timeout": 10,
+          "address": "8.8.8.8"
+        },
+        "tag": "inDns",
+        "protocol": "dokodemo-door",
+        "listen": "127.0.0.1",
+        "port": 62790
+      }
+    ],
+  "outbounds": [
+      {
+        "streamSettings": {
+          "network": "tcp",
+          "tcpSettings": {
+            "header": {
+              "type": ""
+            }
+          }
+        },
+        "tag": "proxy",
+        "mux": {
+          "concurrency": 50,
+          "xudpConcurrency": 128,
+          "enabled": false,
+          "xudpProxyUDP443": "allow"
+        },
+        "protocol": "vmess",
+        "settings": {
+          "vnext": [
+            {
+              "port": 34044,
+              "address": "auae.novintechworld.shop",
+              "users": [
+                {
+                  "email": "",
+                  "id": "561f49fb-0e83-4732-b2af-974caf0bc254",
+                  "level": 0,
+                  "security": "aes-128-gcm",
+                  "alterId": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "streamSettings": {
+          "sockopt": {
+            "tcpNoDelay": true
+          }
+        },
+        "tag": "fragment",
+        "protocol": "freedom",
+        "settings": {
+          "fragment": {
+            "interval": "10-100",
+            "packets": "tlshello",
+            "length": "80-250"
+          },
+          "userLevel": 8
+        }
+      }
+    ],
+  "api": {
+      "tag": "api",
+      "services": [
+        "StatsService"
+      ]
+    },
+  "dns": {
+      "disableCache": true,
+      "servers": [
+        {
+          "address": "8.8.8.8",
+          "skipFallback": false
+        }
+      ],
+      "disableFallback": true,
+      "tag": "dnsQuery",
+      "disableFallbackIfMatch": true,
+      "queryStrategy": "UseIP"
+    },
+  "stats": {},
+  "routing": {
+        "rules": [
+          {
+            "type": "field",
+            "outboundTag": "api",
+            "inboundTag": [
+              "api"
+            ]
+          },
+          {
+            "type": "field",
+            "outboundTag": "outDns",
+            "inboundTag": [
+              "inDns"
+            ]
+          },
+          {
+            "type": "field",
+            "outboundTag": "proxy",
+            "inboundTag": [
+              "dnsQuery"
+            ]
+          },
+          {
+            "type": "field",
+            "outboundTag": "direct",
+            "inboundTag": [
+              "directSocks"
+            ]
+          }
+        ],
+        "domainStrategy": "AsIs",
+        "balancers": []
+      },
+  "policy": {
+        "levels": {
+          "8": {
+            "statsUserDownlink": false,
+            "statsUserUplink": false,
+            "bufferSize": 0,
+            "downlinkOnly": 1,
+            "uplinkOnly": 1,
+            "connIdle": 30,
+            "handshake": 4
+          }
+        },
+        "system": {
+          "statsInboundDownlink": true,
+          "statsOutboundUplink": true,
+          "statsOutboundDownlink": true,
+          "statsInboundUplink": true
+        }
+      }
+}

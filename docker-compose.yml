@@ -20,7 +20,6 @@ services:
       - ./backend:/app/backend
       - ./staticfiles:/app/backend/staticfiles
       - ./media:/app/backend/media
-
     ports:
       - "8000:8000"
     environment:
@@ -30,16 +29,20 @@ services:
       - POSTGRES_HOST=db
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - ASSEMBLYAI_TOKEN=955dcef15e0a47459ab11470d2c5eadb 
+      - ASSEMBLYAI_TOKEN=955dcef15e0a47459ab11470d2c5eadb
       - GAPGPT_TOKEN=sk-hux5OfXRoikXZFIsRTOfCslLvyayOTp2tYWsuBx5HCX0Zne1
       - BOTO3_ARVAN_ACCESS_KEY=c13e1dd1-65f7-4a75-8e8d-41838b2f9150
       - BOTO3_ARVAN_SECRET_KEY=798bb8ad2e09b10b4881332f1db9dff7fcef2499e93ecc5025b8508bfb67f1a4
       - ARVAN_S3_DOMAIN=https://enhubs23.s3.ir-thr-at1.arvanstorage.ir
       - ARVAN_S3_BUCKET=enhubs23
       - ALLOWED_HOSTS=['185.204.197.117','localhost','127.0.0.1']
+      # 👇 Add proxy env vars so Python uses V2Ray
+      # - HTTP_PROXY=http://v2ray:1081
+      # - HTTPS_PROXY=http://v2ray:1081
     depends_on:
       - db
       - redis
+      - v2ray
     networks:
       - app_network
 
@@ -52,6 +55,7 @@ services:
     depends_on:
       - db
       - redis
+      - v2ray
     environment:
       - POSTGRES_DB=mydb
       - POSTGRES_USER=postgres
@@ -71,6 +75,15 @@ services:
     restart: always
     ports:
       - "6379:6379"
+    networks:
+      - app_network
+
+  v2ray:
+    image: v2fly/v2fly-core
+    container_name: v2ray
+    volumes:
+      - ./v2ray/config.json:/etc/v2ray/config.json
+    command: ["v2ray", "-config=/etc/v2ray/config.json"]
     networks:
       - app_network
 
