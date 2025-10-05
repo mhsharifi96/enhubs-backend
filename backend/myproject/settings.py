@@ -193,7 +193,7 @@ AWS_S3_ENDPOINT_URL = os.environ.get('ARVAN_S3_DOMAIN')
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"   # run collectstatic here
-
+PROXY_SOCKS5_URL = os.environ.get('PROXY_SOCKS5_URL','')
 
 # Build domain for static files
 # AWS_S3_CUSTOM_DOMAIN = f"{AWS_S3_ENDPOINT_URL.replace('https://','')}"

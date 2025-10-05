@@ -36,6 +36,7 @@ services:
       - ARVAN_S3_DOMAIN=https://enhubs23.s3.ir-thr-at1.arvanstorage.ir
       - ARVAN_S3_BUCKET=enhubs23
       - ALLOWED_HOSTS=['185.204.197.117','localhost','127.0.0.1']
+      - PROXY_SOCKS5_URL=socks5h://v2ray:1087
       # 👇 Add proxy env vars so Python uses V2Ray
       # - HTTP_PROXY=http://v2ray:1081
       # - HTTPS_PROXY=http://v2ray:1081
@@ -83,7 +84,9 @@ services:
     container_name: v2ray
     volumes:
       - ./v2ray/config.json:/etc/v2ray/config.json
-    command: ["v2ray", "-config=/etc/v2ray/config.json"]
+    command: ["run" ,"--config" ,"/etc/v2ray/config.json"]
+    ports:
+      - "1087:1087"
     networks:
       - app_network
 
