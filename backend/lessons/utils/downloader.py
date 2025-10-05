@@ -69,7 +69,7 @@ def download_file(url: str, filename: str) -> str:
             response = requests.get(
                 url, 
                 stream=True, 
-                timeout=500,
+                timeout=50,
                 proxies=proxies, # Pass the proxy configuration 
                 verify=False
             )
