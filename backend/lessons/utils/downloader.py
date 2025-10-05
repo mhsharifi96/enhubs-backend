@@ -70,7 +70,8 @@ def download_file(url: str, filename: str) -> str:
                 url, 
                 stream=True, 
                 timeout=500,
-                proxies=proxies # Pass the proxy configuration
+                proxies=proxies, # Pass the proxy configuration 
+                verify=False
             )
             response.raise_for_status() # Raise HTTPError for bad status codes (4xx or 5xx)
 
