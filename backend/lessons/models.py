@@ -11,6 +11,17 @@ class PostStatus(models.TextChoices):
     ENABLE = "enbale", "Enable"
     DISABLE = "disable", "Disable"
 
+class Language(models.TextChoices):
+    ENGLISH = "ENGLISH", "english"
+    GERMAN = "GERMAN", "german"
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 
 
@@ -18,9 +29,9 @@ class PostStatus(models.TextChoices):
 class Audio(models.Model):
 
     title = models.CharField(max_length=255)
-    category = models.CharField(max_length=100, blank=True, null=True)
     status = models.CharField(max_length=20, choices=PostStatus.choices, 
                             default=PostStatus.INIT)
+    category = models.ForeignKey(Category,on_delete=models.CASCADE,null=True,blank=True)
     audio_src = models.URLField(blank=True,null=True)
     local_file = models.CharField(max_length=255, blank=True,null=True)
     uploaded_url = models.URLField(blank=True,null=True)
