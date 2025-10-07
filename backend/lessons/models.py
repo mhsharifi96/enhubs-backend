@@ -39,6 +39,7 @@ class Audio(models.Model):
     transcript = models.TextField(null=True, blank=True)
     notes = models.TextField(null=True, blank=True)
     vocabulary_items =  models.TextField(null=True, blank=True)
+    language = models.CharField(max_length=30, choices=Language.choices , default=Language.ENGLISH)
 
 
     # Many-to-Many: avoid repeating vocab
