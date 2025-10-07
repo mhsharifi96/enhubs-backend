@@ -1,6 +1,13 @@
 from rest_framework import serializers
-from .models import Audio
+from .models import Audio, Category
 import json
+
+
+class CategorySerializer(serializers.ModelSerializer):
+
+    class Meta: 
+        model = Category
+        fields = '__all__'
 
 
 

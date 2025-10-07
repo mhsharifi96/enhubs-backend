@@ -1,6 +1,6 @@
-from rest_framework import viewsets
-from .models import Audio
-from .serializers import AudioSerializer
+from rest_framework import viewsets, mixins
+from .models import Audio, Category
+from .serializers import AudioSerializer, CategorySerializer
 
 from rest_framework.pagination import PageNumberPagination
 
@@ -15,3 +15,12 @@ class AudioLessionViewSet(viewsets.ModelViewSet):
     queryset = Audio.objects.all()
     serializer_class = AudioSerializer
     pagination_class = AudioPagination
+
+
+class CategoryViewSet(mixins.ListModelMixin,
+                      mixins.RetrieveModelMixin,
+                      viewsets.GenericViewSet):    
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    lookup_field = "slug"
+
