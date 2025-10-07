@@ -40,6 +40,8 @@ class Audio(models.Model):
     notes = models.TextField(null=True, blank=True)
     vocabulary_items =  models.TextField(null=True, blank=True)
     language = models.CharField(max_length=30, choices=Language.choices , default=Language.ENGLISH)
+    created_at = models.DateTimeField(auto_now_add=True)  # automatically set on creation
+    updated_at = models.DateTimeField(auto_now=True)      # automatically updated on save
 
 
     # Many-to-Many: avoid repeating vocab
