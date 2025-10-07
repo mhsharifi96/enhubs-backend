@@ -1,0 +1,216 @@
+{
+  "log": {},
+  "inbounds": [
+      {
+        "port": 65121,
+        "sniffing": {
+          "destOverride": [
+            "tls",
+            "http",
+            "quic"
+          ],
+          "enabled": true,
+          "domainsExcluded": [
+            "courier.push.apple.com"
+          ]
+        },
+        "protocol": "shadowsocks",
+        "tag": "socks",
+        "settings": {
+          "network": "tcp,udp",
+          "level": 8,
+          "password": "123456",
+          "udp": false,
+          "method": "chacha20-ietf-poly1305",
+          "ota": true
+        },
+        "listen": "127.0.0.1"
+      },
+      {
+        "port": 1087,
+        "protocol": "socks",
+        "listen": "0.0.0.0",
+        "tag": "directSocks",
+        "settings": {
+          "auth": "noauth",
+          "userLevel": 8,
+          "udp": true
+        }
+      },
+      {
+        "port": 65122,
+        "protocol": "dokodemo-door",
+        "listen": "[::1]",
+        "tag": "api",
+        "settings": {
+          "address": "[::1]"
+        }
+      },
+      {
+        "port": 65123,
+        "protocol": "dokodemo-door",
+        "listen": "127.0.0.1",
+        "tag": "inDns",
+        "settings": {
+          "port": 53,
+          "timeout": 10,
+          "network": "tcp,udp",
+          "address": "8.8.8.8",
+          "userLevel": 0
+        }
+      }
+    ],
+  "outbounds": [
+      {
+        "streamSettings": {
+          "tcpSettings": {
+            "header": {
+              "type": "http",
+              "request": {
+                "path": [
+                  "/ViPhr8UjE0DmRROutA1mGWnQY"
+                ],
+                "headers": {
+                  "Connection": [
+                    "keep-alive"
+                  ],
+                  "Pragma": [
+                    "no-cache"
+                  ],
+                  "User-Agent": [
+                    "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36",
+                    "Mozilla/5.0 (iPhone; CPU iPhone OS 10_0_2 like Mac OS X) AppleWebKit/601.1 (KHTML, like Gecko) CriOS/53.0.2785.109 Mobile/14A456 Safari/601.1.46"
+                  ],
+                  "Host": [
+                    "us.memote.ir"
+                  ],
+                  "Accept-Encoding": [
+                    "gzip, deflate"
+                  ]
+                },
+                "version": "1.1",
+                "method": "GET"
+              }
+            }
+          },
+          "network": "tcp"
+        },
+        "settings": {
+          "vnext": [
+            {
+              "users": [
+                {
+                  "id": "217b6aad-4ae4-45a6-ac9f-66a6e117b231",
+                  "flow": "",
+                  "encryption": "none",
+                  "level": 8,
+                  "email": ""
+                }
+              ],
+              "address": "us.memote.ir",
+              "port": 80
+            }
+          ]
+        },
+        "protocol": "vless",
+        "tag": "proxy",
+        "mux": {
+          "enabled": false,
+          "xudpProxyUDP443": "allow",
+          "xudpConcurrency": 128,
+          "concurrency": 50
+        }
+      },
+      {
+        "streamSettings": {
+          "sockopt": {
+            "tcpNoDelay": true
+          }
+        },
+        "settings": {
+          "userLevel": 8,
+          "fragment": {
+            "length": "80-250",
+            "packets": "tlshello",
+            "interval": "10-100"
+          }
+        },
+        "protocol": "freedom",
+        "tag": "fragment"
+      }
+    ],
+  "api": {
+      "services": [
+        "StatsService"
+      ],
+      "tag": "api"
+    },
+  "dns": {
+      "queryStrategy": "UseIP",
+      "disableFallbackIfMatch": true,
+      "disableFallback": true,
+      "tag": "dnsQuery",
+      "disableCache": true,
+      "servers": [
+        {
+          "address": "8.8.8.8",
+          "skipFallback": false
+        }
+      ]
+    },
+  "stats": {},
+  "routing": {
+        "balancers": [],
+        "domainStrategy": "AsIs",
+        "rules": [
+            {
+              "type": "field",
+              "outboundTag": "api",
+              "inboundTag": [
+                "api"
+              ]
+            },
+            {
+              "type": "field",
+              "outboundTag": "outDns",
+              "inboundTag": [
+                "inDns"
+              ]
+            },
+            {
+              "type": "field",
+              "outboundTag": "proxy",
+              "inboundTag": [
+                "dnsQuery"
+              ]
+            },
+            {
+              "type": "field",
+              "outboundTag": "direct",
+              "inboundTag": [
+                "directSocks"
+              ]
+            }
+          ]
+      },
+  "policy": {
+        "levels": {
+          "8": {
+            "downlinkOnly": 1,
+            "connIdle": 30,
+            "statsUserDownlink": false,
+            "statsUserUplink": false,
+            "bufferSize": 0,
+            "handshake": 4,
+            "uplinkOnly": 1
+          }
+        },
+        "system": {
+          "statsOutboundUplink": true,
+          "statsInboundDownlink": true,
+          "statsOutboundDownlink": true,
+          "statsInboundUplink": true
+        }
+      },
+  "transport": {}
+}
