@@ -13,7 +13,7 @@ class AudioSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "title",
-            "category",
+            "category__name",
             "audio_src",
             "uploaded_url",
             "transcript",
