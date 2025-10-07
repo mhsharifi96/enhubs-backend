@@ -14,6 +14,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class AudioSerializer(serializers.ModelSerializer):
     notes = serializers.JSONField(required=False, allow_null=True)
     vocabulary_items = serializers.JSONField(required=False, allow_null=True)
+    category = serializers.CharField(source='category.name', read_only=True)
 
     class Meta:
         model = Audio
