@@ -27,7 +27,10 @@ SECRET_KEY = 'django-insecure-q3mxnn94++1(v_ifv!)+#ldl(rtr#zmkz!xx*%rq+nse-wd!%#
 DEBUG = True
 
 ALLOWED_HOSTS = ["*",
-    "185.204.197.117","127.0.0.1"]
+    "185.204.197.117",
+    "127.0.0.1",
+    "bolt.new",
+    ]
 
 
 # Application definition
@@ -63,6 +66,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5174",
     "http://185.204.197.117:5173",
     "https://185.204.197.117:5173",
+    "https://bolt.new"
 ]
 
 CORS_ALLOW_METHODS = (
