@@ -220,3 +220,4 @@ PROXY_SOCKS5_URL = os.environ.get('PROXY_SOCKS5_URL','')
 #         },
 #     },
 # }
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
