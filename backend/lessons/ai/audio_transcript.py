@@ -19,12 +19,12 @@ def get_transcribe_audio(audio_src: str):
 
 
     config = aai.TranscriptionConfig(
-    speaker_labels=True,
+    # speaker_labels=True,
     format_text=True,
     punctuate=True,
     speech_model=aai.SpeechModel.universal,
     language_detection=True,
-    auto_highlights=True
+    # auto_highlights=True
 
     )
 
