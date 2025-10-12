@@ -63,6 +63,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    "https://langaget.ir",
+    "https://api.langaget.ir",
     "http://127.0.0.1:5173",
     "http://127.0.0.1:5174",
     "http://localhost:5173",
@@ -71,10 +73,12 @@ CORS_ALLOWED_ORIGINS = [
     "https://185.204.197.117:5173",
     "https://bolt.new",
     "https://zp1v56uxy8rdx5ypatb0ockcb9tr6a-oci3--5173--96435430.local-credentialless.webcontainer-api.io",
-    "https://langaget.ir",
-    "https://api.langaget.ir",
+
 
 ]
+
+CORS_ALLOW_CREDENTIALS = True
+
 
 CORS_ALLOW_METHODS = (
     "DELETE",
