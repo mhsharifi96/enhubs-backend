@@ -1,7 +1,7 @@
 
 from celery import shared_task
 from lessons.ai.audio_transcript import get_transcribe_audio
-from lessons.ai.llm import clean_text , extract_important_notes
+from lessons.ai.llm import llm_clean_text , extract_important_notes
 from lessons.utils.downloader import download_file
 from lessons.utils.s3 import upload_file
 
@@ -71,7 +71,7 @@ def transcribe_audio(audio: Audio):
 
 def format_audio_text(audio: Audio):
     if not audio.transcript and audio.raw_transcript:
-        audio.raw_transcript = clean_text(audio.raw_transcript)
+        audio.raw_transcript = llm_clean_text(audio.raw_transcript)
     audio.status = PostStatus.FORMAT_TEXT
     audio.save()
 
@@ -101,7 +101,7 @@ STEP_ACTIONS = {
     PostStatus.DOWNLOAD: download_and_upload_audio,
     PostStatus.UPLOAD: download_and_upload_audio,
     PostStatus.TRANSCRIBE: transcribe_audio,
-    # PostStatus.FORMAT_TEXT: format_audio_text,
+    PostStatus.FORMAT_TEXT: format_audio_text,
     PostStatus.EXTRACT_NOTE: extract_audio_notes,
     PostStatus.ENABLE: enable_audio,
 }

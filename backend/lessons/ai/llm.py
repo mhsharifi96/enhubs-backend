@@ -8,7 +8,7 @@ client = OpenAI(base_url=base_url,
 
 
 
-def clean_text(text: str, model: str = "gpt-4o-mini") -> str:
+def llm_clean_text(text: str, model: str = "gpt-4o-mini") -> str:
     try:
         response = client.chat.completions.create(
         model=model,
