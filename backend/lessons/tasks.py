@@ -70,7 +70,7 @@ def transcribe_audio(audio: Audio):
     audio.save()
 
 def format_audio_text(audio: Audio):
-    if not audio.transcript and audio.raw_transcript:
+    if audio.raw_transcript:
         audio.raw_transcript = llm_clean_text(audio.raw_transcript)
     audio.status = PostStatus.FORMAT_TEXT
     audio.save()
