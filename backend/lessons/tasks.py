@@ -15,7 +15,7 @@ STEP_ORDER = [
     PostStatus.DOWNLOAD,
     PostStatus.UPLOAD,
     PostStatus.TRANSCRIBE,
-    # PostStatus.FORMAT_TEXT,
+    PostStatus.FORMAT_TEXT,
     PostStatus.EXTRACT_NOTE,
     PostStatus.ENABLE,
 ]
