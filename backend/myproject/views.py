@@ -9,12 +9,17 @@ class RegisterView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        password = request.data.get("password")
+        password= request.data.get("password1")
+        password2 = request.data.get("password2")
+
         email = request.data.get("email")
         username = email.split("@")
 
         if not email or not password:
             return Response({"error": "Email and password are required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if password != password2:  
+            return Response({"error": "password and password2 are not equal. "}, status=status.HTTP_400_BAD_REQUEST)
 
         if User.objects.filter(username=username).exists():
             return Response({"error": "Email already exists."}, status=status.HTTP_400_BAD_REQUEST)
