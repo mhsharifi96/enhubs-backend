@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ["*",
     "185.204.197.117",
     "127.0.0.1",
     "bolt.new",
+    "langaget.ir",
     ]
 
 
@@ -68,7 +69,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://185.204.197.117:5173",
     "https://185.204.197.117:5173",
     "https://bolt.new",
-    "https://zp1v56uxy8rdx5ypatb0ockcb9tr6a-oci3--5173--96435430.local-credentialless.webcontainer-api.io"
+    "https://zp1v56uxy8rdx5ypatb0ockcb9tr6a-oci3--5173--96435430.local-credentialless.webcontainer-api.io",
+    "langaget.ir"
 ]
 
 CORS_ALLOW_METHODS = (
