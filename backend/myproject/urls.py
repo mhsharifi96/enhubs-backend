@@ -20,7 +20,7 @@ urlpatterns = [
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api/register/', RegisterView.as_view(), name='register'),
 
-    path("api/", include("lessons.urls")),  # ✅ include app urls
+    path("api/", include("lessons.urls")),
 ]
 
 if settings.DEBUG:
