@@ -1,5 +1,5 @@
 from django.contrib import admin
-from litenrbox.models import Deck, Card, ReviewLog
+from leitnerbox.models import Deck, Card, ReviewLog
 
 @admin.register(Deck)
 class DeckAdmin(admin.ModelAdmin):

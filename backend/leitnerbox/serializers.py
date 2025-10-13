@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from litenrbox.models import Deck, Card, ReviewLog, ReviewQuality
+from leitnerbox.models import Deck, Card, ReviewLog, ReviewQuality
 
 class DeckSerializer(serializers.ModelSerializer):
     class Meta:

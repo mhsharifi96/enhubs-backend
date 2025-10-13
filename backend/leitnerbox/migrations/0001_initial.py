@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
                 ('repetition', models.IntegerField(default=0)),
                 ('ease_factor', models.FloatField(default=2.5)),
                 ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='owner_cards', to=settings.AUTH_USER_MODEL)),
-                ('deck', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cards', to='litenrbox.deck')),
+                ('deck', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cards', to='leitnerbox.deck')),
             ],
         ),
         migrations.CreateModel(
@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('review_date', models.DateTimeField(default=django.utils.timezone.now)),
                 ('quality', models.IntegerField(choices=[(0, 'Forgot'), (1, 'Hard'), (2, 'Good'), (3, 'Easy')], default=2)),
-                ('card', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reviews', to='litenrbox.card')),
+                ('card', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reviews', to='leitnerbox.card')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),

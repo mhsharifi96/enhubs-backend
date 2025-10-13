@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from litenrbox.views import DeckViewSet, CardViewSet, ReviewLogViewSet
+from leitnerbox.views import DeckViewSet, CardViewSet, ReviewLogViewSet
 
 router = DefaultRouter()
 router.register(r'decks', DeckViewSet, basename='deck')

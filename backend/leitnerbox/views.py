@@ -1,8 +1,8 @@
 from rest_framework import viewsets, permissions, decorators
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from litenrbox.models import Deck, Card, ReviewLog
-from litenrbox.serializers import DeckSerializer, CardSerializer, ReviewLogSerializer
+from leitnerbox.models import Deck, Card, ReviewLog
+from leitnerbox.serializers import DeckSerializer, CardSerializer, ReviewLogSerializer
 from rest_framework.pagination import PageNumberPagination
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -22,7 +22,7 @@ class DeckViewSet(viewsets.ModelViewSet):
         return Deck.objects.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user, deck=self.request.data.get('deck'))
+        serializer.save(owner=self.request.user)
     
     @decorators.action(detail=True, methods=['get'], url_path='cards')
     def list_cards(self, request, pk=None):
@@ -48,6 +48,7 @@ class CardViewSet(viewsets.ModelViewSet):
         return Card.objects.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
+
         serializer.save(owner=self.request.user)
 
 class ReviewLogViewSet(viewsets.ModelViewSet):
