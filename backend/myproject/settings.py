@@ -62,23 +62,22 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "https://langagent.ir",
-    "https://api.langagent.ir",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:5174",
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://185.204.197.117:5173",
-    "https://185.204.197.117:5173",
-    "https://bolt.new",
-    "https://zp1v56uxy8rdx5ypatb0ockcb9tr6a-oci3--5173--96435430.local-credentialless.webcontainer-api.io",
-
-
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "https://langagent.ir",
+#     "https://api.langagent.ir",
+#     "http://127.0.0.1:5173",
+#     "http://127.0.0.1:5174",
+#     "http://localhost:5173",
+#     "http://localhost:5174",
+#     "http://185.204.197.117:5173",
+#     "https://185.204.197.117:5173",
+#     "https://bolt.new",
+#     "https://zp1v56uxy8rdx5ypatb0ockcb9tr6a-oci3--5173--96435430.local-credentialless.webcontainer-api.io",
+# ]
 
 CORS_ALLOW_CREDENTIALS = True
-
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ["*"]
 
 CORS_ALLOW_METHODS = (
     "DELETE",
