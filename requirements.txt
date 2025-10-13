@@ -10,3 +10,4 @@ django-storages
 requests[socks]
 gunicorn
 djangorestframework-simplejwt
+googletrans
