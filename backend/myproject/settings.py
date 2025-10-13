@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -120,6 +121,17 @@ REST_FRAMEWORK = {
 
 WSGI_APPLICATION = 'myproject.wsgi.application'
 
+
+SIMPLE_JWT = {
+    # Access token lifetime
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=12),  # default is 5 minutes
+    # Refresh token lifetime
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # default is 1 day
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
