@@ -17,7 +17,7 @@ import asyncio
 class AudioPagination(PageNumberPagination):
     page_size = 10  # number of items per page
     page_size_query_param = 'page_size'  # allow client to set page size
-    max_page_size = 50  # maximum page size allowed
+    max_page_size = 10  # maximum page size allowed
 
 
 

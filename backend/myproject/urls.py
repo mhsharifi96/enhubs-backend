@@ -21,6 +21,7 @@ urlpatterns = [
     path('api/register/', RegisterView.as_view(), name='register'),
 
     path("api/", include("lessons.urls")),
+    path("api/litenrbox/", include("litenrbox.urls")),
 ]
 
 if settings.DEBUG:
