@@ -8,6 +8,7 @@ from .serializers import AudioSerializer, CategorySerializer
 
 from rest_framework.pagination import PageNumberPagination
 from googletrans import Translator
+from django.db.models import Q
 
 import asyncio
 
@@ -28,10 +29,19 @@ class AudioLessionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Audio.objects.filter(status=PostStatus.ENABLE).order_by('-created_at')
 
-        category_name = self.request.query_params.get('category')
+        params = self.request.query_params
+        category_name = params.get('category')
 
         if category_name:
             queryset = queryset.filter(category__name__iexact=category_name)
+        
+        search = params.get('search')
+        if search:
+            queryset = queryset.filter(
+                Q(title__icontains=search) |
+                Q(transcript__icontains=search)
+            )
+
 
         return queryset
 
