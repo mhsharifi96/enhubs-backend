@@ -28,12 +28,11 @@ class DeckViewSet(viewsets.ModelViewSet):
    
     
     @decorators.action(detail=False, methods=['get'], url_path='reviews')
-    def list_cards(self, request):
+    def reviews(self, request):
         """
         List all cards in this deck with pagination.
-        GET /api/decks/reivew
+        GET /api/decks/reivews/
         """
-        deck = self.get_object()
         cards = Card.objects.filter(owner=request.owner)
         paginator = StandardResultsSetPagination()
         page = paginator.paginate_queryset(cards, request)
