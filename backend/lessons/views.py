@@ -22,9 +22,18 @@ class AudioPagination(PageNumberPagination):
 
 
 class AudioLessionViewSet(viewsets.ModelViewSet):
-    queryset = Audio.objects.all().filter(status=PostStatus.ENABLE).order_by('-created_at')
     serializer_class = AudioSerializer
     pagination_class = AudioPagination
+
+    def get_queryset(self):
+        queryset = Audio.objects.filter(status=PostStatus.ENABLE).order_by('-created_at')
+
+        category_name = self.request.query_params.get('category')
+
+        if category_name:
+            queryset = queryset.filter(category__name__iexact=category_name)
+
+        return queryset
 
 
 class CategoryViewSet(mixins.ListModelMixin,
