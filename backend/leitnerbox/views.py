@@ -38,11 +38,11 @@ class DeckViewSet(viewsets.ModelViewSet):
         serializer = CardSerializer(page, many=True)
         return paginator.get_paginated_response(serializer.data)
     
-    @decorators.action(detail=False, methods=['get'], url_path='review')
+    @decorators.action(detail=False, methods=['get'], url_path='reviews')
     def list_cards(self, request):
         """
         List all cards in this deck with pagination.
-        GET /api/decks/cards/reivew
+        GET /api/decks/reivew
         """
         deck = self.get_object()
         cards = Card.objects.filter(owner=request.owner)
