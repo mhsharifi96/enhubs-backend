@@ -25,18 +25,7 @@ class DeckViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
     
-    @decorators.action(detail=True, methods=['get'], url_path='cards')
-    def list_cards(self, request, pk=None):
-        """
-        List all cards in this deck with pagination.
-        GET /api/decks/{id}/cards/
-        """
-        deck = self.get_object()
-        cards = Card.objects.filter(deck=deck)
-        paginator = StandardResultsSetPagination()
-        page = paginator.paginate_queryset(cards, request)
-        serializer = CardSerializer(page, many=True)
-        return paginator.get_paginated_response(serializer.data)
+   
     
     @decorators.action(detail=False, methods=['get'], url_path='reviews')
     def list_cards(self, request):
@@ -51,6 +40,18 @@ class DeckViewSet(viewsets.ModelViewSet):
         serializer = CardSerializer(page, many=True)
         return paginator.get_paginated_response(serializer.data)
     
+    @decorators.action(detail=True, methods=['get'], url_path='cards')
+    def list_cards(self, request, pk=None):
+        """
+        List all cards in this deck with pagination.
+        GET /api/decks/{id}/cards/
+        """
+        deck = self.get_object()
+        cards = Card.objects.filter(deck=deck)
+        paginator = StandardResultsSetPagination()
+        page = paginator.paginate_queryset(cards, request)
+        serializer = CardSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
 class CardViewSet(viewsets.ModelViewSet):
     """API for managing cards."""
