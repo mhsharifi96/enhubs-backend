@@ -33,7 +33,7 @@ class DeckViewSet(viewsets.ModelViewSet):
         List all cards in this deck with pagination.
         GET /api/decks/reivews/
         """
-        cards = Card.objects.filter(owner=request.owner)
+        cards = Card.objects.filter(owner=request.user)
         paginator = StandardResultsSetPagination()
         page = paginator.paginate_queryset(cards, request)
         serializer = CardSerializer(page, many=True)
