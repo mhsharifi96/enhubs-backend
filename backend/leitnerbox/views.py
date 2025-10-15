@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from leitnerbox.models import Deck, Card, ReviewLog
 from leitnerbox.serializers import DeckSerializer, CardSerializer, ReviewLogSerializer
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import status
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -57,6 +58,16 @@ class CardViewSet(viewsets.ModelViewSet):
         )
 
         serializer.save(owner=user, deck=deck)
+
+    def retrieve(self, request, *args, **kwargs):
+        """Get a single card by ID (only if it belongs to the current user)."""
+        try:
+            card = self.get_queryset().get(pk=kwargs["pk"])
+        except Card.DoesNotExist:
+            return Response({"detail": "Card not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.get_serializer(card)
+        return Response(serializer.data)
 
 
 class ReviewLogViewSet(viewsets.ModelViewSet):
