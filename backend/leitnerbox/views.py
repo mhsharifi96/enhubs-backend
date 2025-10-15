@@ -48,8 +48,16 @@ class CardViewSet(viewsets.ModelViewSet):
         return Card.objects.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
+        user = self.request.user
 
-        serializer.save(owner=self.request.user)
+        # Create a deck if the user doesn't already have one
+        deck, _ = Deck.objects.get_or_create(
+            owner=user,
+            defaults={"name": f"{user.username}'s default deck"}
+        )
+
+        serializer.save(owner=user, deck=deck)
+
 
 class ReviewLogViewSet(viewsets.ModelViewSet):
     """API for logging card reviews."""
