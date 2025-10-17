@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'lessons',
     'leitnerbox',
+    'chat',
     ]
 
 MIDDLEWARE = [
@@ -247,3 +248,5 @@ PROXY_SOCKS5_URL = os.environ.get('PROXY_SOCKS5_URL','')
 #     },
 # }
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+OPENAI_API_KEY='sk-hux5OfXRoikXZFIsRTOfCslLvyayOTp2tYWsuBx5HCX0Zne1'
+OPENAI_BASE_URL='https://api.gapgpt.app/v1'

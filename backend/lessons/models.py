@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class PostStatus(models.TextChoices):
@@ -11,12 +12,26 @@ class PostStatus(models.TextChoices):
     ENABLE = "enbale", "Enable"
     DISABLE = "disable", "Disable"
 
+
+class SpeakingStatus(models.TextChoices):
+    INIT = "init", "Init"
+    GENERATE_TEXT = "GENERATE_TEXT", "GENERATE TEXT"
+    ENABLE = "enbale", "Enable"
+    DISABLE = "disable", "Disable"
+
 class Language(models.TextChoices):
     ENGLISH = "ENGLISH", "english"
     GERMAN = "GERMAN", "german"
 
 
 class Category(models.Model):
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+class tag(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255)
 
@@ -48,6 +63,33 @@ class Audio(models.Model):
 
     def __str__(self):
         return self.title
+    
+
+
+class AudioHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='audio_history')
+    audio = models.ForeignKey('Audio', on_delete=models.CASCADE, related_name='views')
+    views_count = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('user', 'audio')  # one record per user-audio pair
+
+    def __str__(self):
+        return f"{self.user.username} listened to {self.audio.title} ({self.views_count} times)"
 
 
 
+
+class Speaking(models.Model):
+    title = models.CharField(max_length=255)
+    text = models.TextField(null=True, blank=True)
+    prompt_instructions = models.TextField(null=True, blank=True)
+    language = models.CharField(max_length=30, choices=Language.choices , default=Language.ENGLISH)
+    category = models.ForeignKey(Category,on_delete=models.CASCADE,null=True,blank=True)
+    tags = models.ManyToManyField(tag, blank=True)
+    status = models.CharField(max_length=20, choices=SpeakingStatus.choices, 
+                            default=PostStatus.INIT)
+    created_at = models.DateTimeField(auto_now_add=True)  # automatically set on creation
+    updated_at = models.DateTimeField(auto_now=True)      # automatically updated on save

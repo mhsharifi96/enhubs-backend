@@ -21,6 +21,7 @@ urlpatterns = [
 
     path("api/", include("lessons.urls")),
     path("api/leitnerbox/", include("leitnerbox.urls")),
+    path("api/chat/", include("chat.urls")),
 ]
 
 if settings.DEBUG:

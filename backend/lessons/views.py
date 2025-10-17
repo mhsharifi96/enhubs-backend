@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 
 from rest_framework import viewsets, mixins
-from .models import Audio, Category, PostStatus
+from .models import Audio, Category, PostStatus, AudioHistory
 from .serializers import AudioSerializer, CategorySerializer
 
 from rest_framework.pagination import PageNumberPagination
@@ -51,6 +51,20 @@ class AudioLessionViewSet(viewsets.ReadOnlyModelViewSet):
         else:
             permission_classes = [permissions.AllowAny]
         return [permission() for permission in permission_classes]
+
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        response = super().retrieve(request, *args, **kwargs)
+
+        if request.user.is_authenticated:
+            history, created = AudioHistory.objects.get_or_create(user=request.user, audio=instance)
+            if not created:
+                history.views_count += 1
+                history.save(update_fields=["views_count", "updated_at"])
+
+        return response
+
 
 
 class CategoryViewSet(mixins.ListModelMixin,

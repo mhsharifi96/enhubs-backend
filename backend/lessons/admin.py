@@ -1,10 +1,13 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Audio , PostStatus, Category
+from .models import Audio , PostStatus, Category, tag , Speaking, AudioHistory
 from lessons.tasks import process_audio
 
 admin.site.register(Category)
+admin.site.register(tag)
+admin.site.register(Speaking)
+admin.site.register(AudioHistory)
 
 
 
