@@ -18,8 +18,7 @@ class StartConversationAPIView(APIView):
 
     def post(self, request):
         user = request.user
-        query = AudioHistory.objects.filter(user=user)
-        if query.count()> 4:
+        if  ConversationLog.objects.filter(user=user).count()> 4:
             return Response( {"error": "You have reached the maximum number of 4 active conversations."},
                              status=status.HTTP_429_TOO_MANY_REQUESTS)
 
