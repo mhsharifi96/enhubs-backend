@@ -19,7 +19,7 @@ class StartConversationAPIView(APIView):
     def post(self, request):
         user = request.user
 
-        recent_audio = AudioHistory.objects.filter(user=user).order_by('-created_at').first()
+        recent_audio = AudioHistory.objects.filter(user=user).order_by('-updated_at').first()
         if not recent_audio:
             return Response({"reply": "please first listen the audio ...", "conversation_id": ""}, status=status.HTTP_200_OK)
         
