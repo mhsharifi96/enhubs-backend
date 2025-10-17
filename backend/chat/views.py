@@ -24,12 +24,12 @@ class StartConversationAPIView(APIView):
             return Response({"reply": "please first listen the audio ...", "conversation_id": ""}, status=status.HTTP_200_OK)
         
         audio_title = recent_audio.audio.title if recent_audio else "General topic"
-        audio_transcript = recent_audio.audio.transcript if recent_audio else ""
+        audio_transcript = recent_audio.audio.raw_transcript if recent_audio else ""
 
         prompt = f"""
         You are a friendly English tutor.
         The user recently listened to an audio titled: {audio_title}.
-        Transcript: {audio_transcript[:500]}...
+        Transcript: {audio_transcript[:700]}...
 
         Start a short conversation to help the user practice speaking naturally.
         Ask the first question.
