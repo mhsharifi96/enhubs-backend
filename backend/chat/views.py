@@ -18,6 +18,9 @@ class StartConversationAPIView(APIView):
 
     def post(self, request):
         user = request.user
+        query = AudioHistory.objects.filter(user=user)
+        if query.count()> 4:
+            return Response({"error": "maximum conversions are 4"}, status=status.HTTP_429_TOO_MANY_REQUESTS)
 
         recent_audio = AudioHistory.objects.filter(user=user).order_by('-updated_at').first()
         if not recent_audio:
@@ -82,6 +85,9 @@ class ContinueConversationAPIView(APIView):
 
         # add user message
         history = log.history
+        if len(history)>10:
+            return Response({"error": "Conversation too long."}, status=status.HTTP_429_TOO_MANY_REQUESTS)
+        
         history.append({"role": "user", "content": user_message})
 
         completion = client.chat.completions.create(
