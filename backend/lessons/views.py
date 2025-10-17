@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 
 from rest_framework import viewsets, mixins
-from .models import Audio, Category, PostStatus, AudioHistory
-from .serializers import AudioSerializer, CategorySerializer
+from .models import Audio, Category, PostStatus, AudioHistory , Speaking , SpeakingStatus
+from .serializers import AudioSerializer, CategorySerializer, SpeakingSerializer
 
 from rest_framework.pagination import PageNumberPagination
 from googletrans import Translator
@@ -15,7 +15,7 @@ import asyncio
 
 
 
-class AudioPagination(PageNumberPagination):
+class LessonPagination(PageNumberPagination):
     page_size = 10  # number of items per page
     page_size_query_param = 'page_size'  # allow client to set page size
     max_page_size = 10  # maximum page size allowed
@@ -24,7 +24,7 @@ class AudioPagination(PageNumberPagination):
 
 class AudioLessionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AudioSerializer
-    pagination_class = AudioPagination
+    pagination_class = LessonPagination
 
     def get_queryset(self):
         queryset = Audio.objects.filter(status=PostStatus.ENABLE).order_by('-created_at')
@@ -66,6 +66,36 @@ class AudioLessionViewSet(viewsets.ReadOnlyModelViewSet):
         return response
 
 
+class SpeakingLessionViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = SpeakingSerializer
+    pagination_class = LessonPagination
+
+    def get_queryset(self):
+        queryset = Speaking.objects.filter(status=SpeakingStatus.ENABLE).order_by('-created_at')
+
+        params = self.request.query_params
+        category_name = params.get('category')
+
+        if category_name:
+            queryset = queryset.filter(category__name__iexact=category_name)
+        
+        search = params.get('search')
+        if search:
+            queryset = queryset.filter(
+                Q(title__icontains=search) |
+                Q(transcript__icontains=search)
+            )
+
+        return queryset
+    
+    def get_permissions(self):
+        """Authenticate only for retrieve endpoint."""
+        if self.action == 'retrieve':
+            permission_classes = [permissions.IsAuthenticated]
+        else:
+            permission_classes = [permissions.AllowAny]
+        return [permission() for permission in permission_classes]
+    
 
 class CategoryViewSet(mixins.ListModelMixin,
                       mixins.RetrieveModelMixin,

@@ -19,7 +19,7 @@ class StartConversationAPIView(APIView):
     def post(self, request):
         user = request.user
         if  ConversationLog.objects.filter(user=user).count()> 4:
-            return Response( {"error": "You have reached the maximum number of 4 active conversations."},
+            return Response({"error": "You have reached the maximum number of 4 active conversations."},
                              status=status.HTTP_429_TOO_MANY_REQUESTS)
 
         recent_audio = AudioHistory.objects.filter(user=user).order_by('-updated_at').first()

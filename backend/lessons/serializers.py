@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Audio, Category
+from .models import Audio, Category , Speaking
 import json
 
 
@@ -44,3 +44,18 @@ class AudioSerializer(serializers.ModelSerializer):
         
         rep['vocabulary'] = rep.pop('vocabulary_items', None)
         return rep
+
+
+class SpeakingSerializer(serializers.ModelSerializer):
+    category = serializers.CharField(source='category.name', read_only=True)
+    class Meta: 
+        model= Speaking
+        fields = [
+            "id",
+            "title",
+            "question",
+            "text",
+            "category",
+            # "tags"
+
+        ]

@@ -84,6 +84,7 @@ class AudioHistory(models.Model):
 
 class Speaking(models.Model):
     title = models.CharField(max_length=255)
+    question = models.TextField(null=True,blank=True)
     text = models.TextField(null=True, blank=True)
     prompt_instructions = models.TextField(null=True, blank=True)
     language = models.CharField(max_length=30, choices=Language.choices , default=Language.ENGLISH)
