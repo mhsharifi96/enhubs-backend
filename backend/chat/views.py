@@ -54,6 +54,8 @@ class StartConversationAPIView(APIView):
         log = ConversationLog.objects.create(
             user=user,
             history=[
+                {"role": "system", "content": "You are a helpful English tutor who helps users improve speaking."},
+                {"role": "user", "content": prompt},
                 {"role": "system", "content": "You are a helpful English tutor."},
                 {"role": "assistant", "content": text},
             ]
