@@ -20,7 +20,8 @@ class StartConversationAPIView(APIView):
         user = request.user
         query = AudioHistory.objects.filter(user=user)
         if query.count()> 4:
-            return Response({"error": "maximum conversions are 4"}, status=status.HTTP_429_TOO_MANY_REQUESTS)
+            return Response( {"error": "You have reached the maximum number of 4 active conversations."},
+                             status=status.HTTP_429_TOO_MANY_REQUESTS)
 
         recent_audio = AudioHistory.objects.filter(user=user).order_by('-updated_at').first()
         if not recent_audio:
