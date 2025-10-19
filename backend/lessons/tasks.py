@@ -129,3 +129,14 @@ def process_audio(audio_id: int):
     # except Exception as e:
     #     print(f"Error processing audio {audio_id}: {e}")
     #     raise e
+
+
+@shared_task
+def create_audio_task(title:str, file_name:str, uploaded_path_file:str, 
+                     audio_src:str, status: PostStatus.UPLOAD):
+    Audio.objects.create(
+        title=title or file_name,
+        uploaded_url=uploaded_path_file,
+        audio_src= audio_src,
+        status=status,
+    )
