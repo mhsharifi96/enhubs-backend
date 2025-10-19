@@ -21,7 +21,7 @@ class Command(BaseCommand):
 
             await message.reply_text("⏳ Processing your file...")
             self.stdout.write(f"Processing message {message.message_id} from {message.chat_id}")
-            self.stdout.write(f"Message content: {message}")
+            # self.stdout.write(f"Message content: {message}")
             
 
             file = None
@@ -59,7 +59,7 @@ class Command(BaseCommand):
         # --- Start Bot ---
         app_builder = ApplicationBuilder().token(BOT_TOKEN)
         if PROXY_URL:
-            app_builder = app_builder.get_updates_proxy("socks5h://v2ray:1087")
+            app_builder = app_builder.get_updates_proxy(PROXY_URL).proxy(PROXY_URL)
 
         app = app_builder.build()
         app.add_handler(MessageHandler(filters.ALL, handle_forward))
