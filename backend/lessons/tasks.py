@@ -133,10 +133,11 @@ def process_audio(audio_id: int):
 
 @shared_task
 def create_audio_task(title:str, file_name:str, uploaded_path_file:str, 
-                     audio_src:str, status: PostStatus.UPLOAD):
+                     audio_src:str):
+    status:str =  PostStatus.UPLOAD
     Audio.objects.create(
         title=title or file_name,
         uploaded_url=uploaded_path_file,
         audio_src= audio_src,
-        status=status,
+         status=status,
     )
