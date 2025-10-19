@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 from lessons.utils.s3 import upload_file
 from lessons.models import Audio , PostStatus
-from asgiref.sync import sync_to_async
+# from asgiref.sync import sync_to_async
 
 class Command(BaseCommand):
     help = "Run Telegram bot to download forwarded posts and upload to Ceph"
@@ -48,12 +48,12 @@ class Command(BaseCommand):
             await message.reply_text(f"✅ File downloaded locally. file title : {title} ")
             uploaded_path_file=upload_file(file_path)
 
-            await sync_to_async(Audio.objects.create)(
-                title=title or file_name,
-                status=PostStatus.UPLOAD,
-                uploaded_url=uploaded_path_file,
-                audio_src="Telegram Bot"
-            )
+            # await sync_to_async(Audio.objects.create)(
+            #     title=title or file_name,
+            #     status=PostStatus.UPLOAD,
+            #     uploaded_url=uploaded_path_file,
+            #     audio_src="Telegram Bot"
+            # )
 
             os.remove(file_path)
 
