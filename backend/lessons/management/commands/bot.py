@@ -47,7 +47,7 @@ class Command(BaseCommand):
             await message.reply_text(f"✅ File downloaded locally. file title : {title} ")
             uploaded_path_file=upload_file(file_path)
 
-            Audio.objects.create(title=title or file_name,
+            await Audio.objects.acreate(title=title or file_name,
                                  status=PostStatus.UPLOAD,
                                  uploaded_url=uploaded_path_file,
                                  audio_src="Telegram Bot")
