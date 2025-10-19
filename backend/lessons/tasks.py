@@ -135,9 +135,11 @@ def process_audio(audio_id: int):
 def create_audio_task(title:str, file_name:str, uploaded_path_file:str, 
                      audio_src:str):
     status:str =  PostStatus.UPLOAD
-    Audio.objects.create(
+    audio = Audio.objects.create(
         title=title or file_name,
         uploaded_url=uploaded_path_file,
         audio_src= audio_src,
          status=status,
     )
+    process_audio.delay(audio.id)
+    print(f"Audio {audio.id} created and processing task triggered.")

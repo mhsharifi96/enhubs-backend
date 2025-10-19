@@ -14,6 +14,8 @@ admin.site.register(AudioHistory)
 @admin.register(Audio)
 class AudioAdmin(admin.ModelAdmin):
     list_display = ('title', 'category', 'status')
+    list_editable = ('category',)  # now editable in list view
+
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
