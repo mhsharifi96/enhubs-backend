@@ -18,7 +18,8 @@ def upload_file(local_file_path: str, s3_folder="audio") -> str:
             's3',
             endpoint_url=settings.AWS_S3_ENDPOINT_URL,
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            verify=False,
         )
     except Exception as exc:
         logger.error(f"Failed to create S3 resource: {exc}")
