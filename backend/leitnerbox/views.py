@@ -54,6 +54,7 @@ class DeckViewSet(viewsets.ModelViewSet):
         POST /api/decks/reviews/<card_id>/
         Body: { "quality": 0–5 }
         """
+        print("----------hiiiiii---------")
         card = get_object_or_404(Card, pk=pk, owner=request.user)
         quality = int(request.data.get('quality', -1))
 
