@@ -7,7 +7,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-
+from django.db.models import F, ExpressionWrapper, DateTimeField
+from datetime import timedelta
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -37,10 +38,16 @@ class DeckViewSet(viewsets.ModelViewSet):
         List all cards in this deck with pagination.
         GET /api/decks/reivews/
         """
-        cards = Card.objects.filter(
-        owner=request.user,
-        next_review_at__lte=timezone.now()
-        ).order_by('next_review_at')
+        now = timezone.now()
+        cards = Card.objects.annotate(
+            next_review=ExpressionWrapper(
+                F('updated_at') + timedelta(days=F('interval')),
+                output_field=DateTimeField()
+            )
+        ).filter(
+            owner=request.user,
+            next_review__lte=now
+        ).order_by('next_review')
         paginator = StandardResultsSetPagination()
         page = paginator.paginate_queryset(cards, request)
         serializer = CardSerializer(page, many=True)
