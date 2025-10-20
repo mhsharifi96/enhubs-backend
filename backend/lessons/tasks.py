@@ -1,4 +1,5 @@
 
+import time
 from celery import shared_task
 from lessons.ai.audio_transcript import get_transcribe_audio
 from lessons.ai.llm import llm_clean_text , extract_important_notes
@@ -64,7 +65,7 @@ def download_and_upload_audio(audio: Audio):
 
 def transcribe_audio(audio: Audio):
 
-    if not audio.raw_transcript and audio.audio_src:
+    if not audio.raw_transcript:
         audio.raw_transcript , audio.transcript = get_transcribe_audio(audio.uploaded_url)
     audio.status = PostStatus.TRANSCRIBE
     audio.save()
@@ -110,8 +111,8 @@ STEP_ACTIONS = {
 @shared_task
 def process_audio(audio_id: int):
     """
-    Process a audio from its current step through all remaining steps until ENABLE.
-    Each step is only executed once.
+    Process an audio from its current step through all remaining steps until ENABLE.
+    Each step is only executed once and retried up to 3 times if it fails.
     """
     try:
         audio = Audio.objects.get(id=audio_id)
@@ -120,15 +121,28 @@ def process_audio(audio_id: int):
         # Loop through current and all next steps
         for status in STEP_ORDER[current_index:]:
             action = STEP_ACTIONS.get(status)
-            if action:
-                action(audio)
-                print(f"Audio {audio_id}: completed step '{status}'")
+            if not action:
+                continue
+
+            max_retries = 3
+            for attempt in range(1, max_retries + 1):
+                try:
+                    print(f"Audio {audio_id}: running step '{status}' (attempt {attempt}/{max_retries})")
+                    action(audio)
+                    print(f"Audio {audio_id}: completed step '{status}'")
+                    break  # success → move to next step
+                except Exception as e:
+                    print(f"Audio {audio_id}: step '{status}' failed on attempt {attempt}: {e}")
+                    if attempt < max_retries:
+                        print("Retrying in 2 seconds...")
+                        time.sleep(2)
+                    else:
+                        print(f"Audio {audio_id}: step '{status}' failed after {max_retries} attempts.")
+                        raise  # stop processing further steps
 
     except Audio.DoesNotExist:
         print(f"Audio with ID {audio_id} not found.")
-    # except Exception as e:
-    #     print(f"Error processing audio {audio_id}: {e}")
-    #     raise e
+
 
 
 @shared_task
