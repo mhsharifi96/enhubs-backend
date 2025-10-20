@@ -22,6 +22,8 @@ class Card(models.Model):
     interval = models.IntegerField(default=1)  # Spaced repetition interval in days
     repetition = models.IntegerField(default=0)  # Number of successful reviews
     ease_factor = models.FloatField(default=2.5)  # Learning factor for Leitner algorithm
+    next_review_at = models.DateTimeField(default=timezone.now)  # ✅ NEW FIELD
+
 
     def __str__(self):
         return self.front_text
