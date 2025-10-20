@@ -36,7 +36,7 @@ class DeckViewSet(viewsets.ModelViewSet):
     def reviews(self, request):
         """
         List all cards in this deck with pagination.
-        GET /api/decks/reivews/
+        GET /api/leitnerbox/decks/reivews/
         """
         cards = Card.objects.filter(
         owner=request.user,
@@ -47,15 +47,15 @@ class DeckViewSet(viewsets.ModelViewSet):
         serializer = CardSerializer(page, many=True)
         return paginator.get_paginated_response(serializer.data)
     
-    @decorators.action(detail=True, methods=['post'], url_path='reviews')
-    def review_card(self, request, pk=None):
+    @decorators.action(detail=False, methods=['post'], url_path='reviews/card')
+    def review_card(self, request):
         """
         Review a specific card using the SuperMemo2 algorithm.
-        POST /api/decks/reviews/<card_id>/
-        Body: { "quality": 0–5 }
+        POST /api/leitnerbox/decks/reviews/card
+        Body: { "card_id":4 ,"quality": 0–5 }
         """
-        print("----------hiiiiii---------")
-        card = get_object_or_404(Card, pk=pk, owner=request.user)
+        card_id = int(request.data.get('card_id', 1))
+        card = get_object_or_404(Card, pk=card_id, owner=request.user)
         quality = int(request.data.get('quality', -1))
 
         if quality < 0 or quality > 5:
