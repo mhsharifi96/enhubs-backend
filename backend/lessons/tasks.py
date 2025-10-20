@@ -1,5 +1,6 @@
 
 import time
+import random
 from celery import shared_task
 from lessons.ai.audio_transcript import get_transcribe_audio
 from lessons.ai.llm import llm_clean_text , extract_important_notes
@@ -115,7 +116,12 @@ def process_audio(audio_id: int):
     Each step is only executed once and retried up to 3 times if it fails.
     """
     try:
+        
+        rand_int = random.randint(1,10)
+        time.sleep(rand_int)
         audio = Audio.objects.get(id=audio_id)
+        print(f"start process after {rand_int}s for audio with id {audio_id}")
+        
         current_index = STEP_ORDER.index(audio.status)
 
         # Loop through current and all next steps
