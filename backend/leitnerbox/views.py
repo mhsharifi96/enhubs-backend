@@ -8,7 +8,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.db.models import F, ExpressionWrapper, DateTimeField, DurationField
-from datetime import timedelta
+from django.db.models.functions import Now
 
 
 class StandardResultsSetPagination(PageNumberPagination):
