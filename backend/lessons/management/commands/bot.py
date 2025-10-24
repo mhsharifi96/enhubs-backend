@@ -52,20 +52,20 @@ class Command(BaseCommand):
             else:
                 await message.reply_text("❌ No valid file found in the message.")
                 return
-            # file_name = file_name.replace(" ","_")
-            # file_path = f"/tmp/{file_name}"
-            # await file.download_to_drive(file_path)
-            # await message.reply_text(f"✅ File downloaded locally. file title : {title} ")
-            # uploaded_path_file=upload_file(file_path)
-            # create_audio_task.delay(title=title, file_name=file_name, 
-            #                         uploaded_path_file= uploaded_path_file,
-            #                         audio_src=uploaded_path_file)
+            file_name = file_name.replace(" ","_")
+            file_path = f"/tmp/{file_name}"
+            await file.download_to_drive(file_path)
+            await message.reply_text(f"✅ File downloaded locally. file title : {title} ")
+            uploaded_path_file=upload_file(file_path)
+            create_audio_task.delay(title=title, file_name=file_name, 
+                                    uploaded_path_file= uploaded_path_file,
+                                    audio_src=uploaded_path_file)
 
          
 
-            # os.remove(file_path)
+            os.remove(file_path)
 
-            # await message.reply_text(f"✅ Uploaded to Ceph!, {uploaded_path_file}")
+            await message.reply_text(f"✅ Uploaded to Ceph!, {uploaded_path_file}")
 
         # --- Start Bot ---
         app_builder = ApplicationBuilder().token(BOT_TOKEN)
