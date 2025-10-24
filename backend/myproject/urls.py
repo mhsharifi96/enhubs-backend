@@ -10,6 +10,7 @@ from rest_framework_simplejwt.views import (
 )
 
 from .views import RegisterView ,CustomTokenObtainPairView
+from .views import PasswordResetRequestView, PasswordResetConfirmView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -18,6 +19,8 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api/register/', RegisterView.as_view(), name='register'),
+    path('api/password-reset/', PasswordResetRequestView.as_view(), name='password_reset'),
+    path('api/password-reset-confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
 
     path("api/", include("lessons.urls")),
     path("api/leitnerbox/", include("leitnerbox.urls")),
