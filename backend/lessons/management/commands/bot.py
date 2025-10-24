@@ -45,6 +45,7 @@ class Command(BaseCommand):
                 create_audio_task.delay(title=title, file_name=title, 
                                     uploaded_path_file= url,
                                     audio_src=url)
+                await message.reply_text("✅ URL processed and task created. agian!")
                 return
 
 
