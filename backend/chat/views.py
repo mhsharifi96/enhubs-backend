@@ -32,7 +32,7 @@ class StartConversationAPIView(APIView):
         prompt = f"""
         You are a friendly English tutor.
         The user recently listened to an audio titled: {audio_title}.
-        Transcript: {audio_transcript[:700]}...
+        Transcript: {audio_transcript[:800]}...
 
         Start a short conversation to help the user practice speaking naturally.
         Ask the first question.
