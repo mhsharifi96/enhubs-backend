@@ -30,7 +30,7 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - ASSEMBLYAI_TOKEN=955dcef15e0a47459ab11470d2c5eadb
-      - GAPGPT_TOKEN=sk-hux5OfXRoikXZFIsRTOfCslLvyayOTp2tYWsuBx5HCX0Zne1
+      - GAPGPT_TOKEN=sk-DOJtrj5JfI1WVvQIN2Vhf6ei4rxzc6JffOwNBLpas0Ae1AvD
       - BOTO3_ARVAN_ACCESS_KEY=c13e1dd1-65f7-4a75-8e8d-41838b2f9150
       - BOTO3_ARVAN_SECRET_KEY=798bb8ad2e09b10b4881332f1db9dff7fcef2499e93ecc5025b8508bfb67f1a4
       - ARVAN_S3_DOMAIN=https://enhubs23.s3.ir-thr-at1.arvanstorage.ir
