@@ -19,6 +19,7 @@ STEP_ORDER = [
     PostStatus.TRANSCRIBE,
     PostStatus.FORMAT_TEXT,
     PostStatus.EXTRACT_NOTE,
+    PostStatus.TRANSLATE_TEXT,
     PostStatus.ENABLE,
 ]
 
@@ -72,7 +73,7 @@ def transcribe_audio(audio: Audio):
     else:
         if not audio.transcript_json:
             audio.transcript_json = convert_vtt_to_json(audio.transcript)
-            
+
     audio.status = PostStatus.TRANSCRIBE
     audio.save()
 
