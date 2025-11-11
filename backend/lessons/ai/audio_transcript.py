@@ -11,7 +11,7 @@ def get_transcribe_audio(audio_src: str):
         audio_file (str): Path to a local audio file or a URL.
 
     Returns:
-        str: Transcribed text.
+        str , str : Transcribed text. 
 
     Raises:
         RuntimeError: If transcription fails.

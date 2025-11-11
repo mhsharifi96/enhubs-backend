@@ -9,6 +9,7 @@ class PostStatus(models.TextChoices):
     TRANSCRIBE = "transcribe", "Transcribe"
     FORMAT_TEXT = "format_text", "Format text"
     EXTRACT_NOTE = "is_extract_note", "Extract note"
+    TRANSLATE_TEXT = "translate_text", "Translate text"
     ENABLE = "enbale", "Enable"
     DISABLE = "disable", "Disable"
 
@@ -52,6 +53,7 @@ class Audio(models.Model):
     uploaded_url = models.URLField(blank=True,null=True)
     raw_transcript = models.TextField(null=True, blank=True)
     transcript = models.TextField(null=True, blank=True)
+    transcript_json = models.JSONField(null=True, blank=True)
     notes = models.TextField(null=True, blank=True)
     vocabulary_items =  models.TextField(null=True, blank=True)
     tags = models.ManyToManyField(tag, blank=True)

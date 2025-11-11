@@ -27,3 +27,20 @@ def extract_url_and_filename(text: str):
     return {"url": url, "title": file_name}
 
 
+def convert_vtt_to_json(vtt_text):
+    pattern = re.compile(r'(\d{2}:\d{2}\.\d{3}) --> (\d{2}:\d{2}\.\d{3})\n(.*?)\n(?=\d{2}:\d{2}\.\d{3}|$)', re.S)
+    captions = []
+    
+    for match in pattern.finditer(vtt_text):
+        start, end, text = match.groups()
+        captions.append({
+            "start": start,
+            "end": end,
+            "text": text.strip().replace('\n', ' '),
+            "fa_text": "",
+        })
+    
+    return {"captions": captions}
+
+
+    

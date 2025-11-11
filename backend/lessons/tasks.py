@@ -1,15 +1,15 @@
-
 import time
 import random
 from celery import shared_task
 from lessons.ai.audio_transcript import get_transcribe_audio
-from lessons.ai.llm import llm_clean_text , extract_important_notes
+from lessons.ai.llm import llm_clean_text, extract_important_notes, translate_text
 from lessons.utils.downloader import download_file
 from lessons.utils.s3 import upload_file
+from lessons.utils.helpers import convert_vtt_to_json
 
 import json
 
-from lessons.models import Audio , PostStatus
+from lessons.models import Audio, PostStatus
 
 # Define the step order
 STEP_ORDER = [
@@ -63,13 +63,19 @@ def download_and_upload_audio(audio: Audio):
         raise
 
 
-
 def transcribe_audio(audio: Audio):
-
     if not audio.raw_transcript:
-        audio.raw_transcript , audio.transcript = get_transcribe_audio(audio.uploaded_url)
+        audio.raw_transcript, audio.transcript = get_transcribe_audio(
+            audio.uploaded_url
+        )
+        audio.transcript_json = convert_vtt_to_json(audio.transcript)
+    else:
+        if not audio.transcript_json:
+            audio.transcript_json = convert_vtt_to_json(audio.transcript)
+            
     audio.status = PostStatus.TRANSCRIBE
     audio.save()
+
 
 def format_audio_text(audio: Audio):
     if audio.raw_transcript:
@@ -77,23 +83,37 @@ def format_audio_text(audio: Audio):
     audio.status = PostStatus.FORMAT_TEXT
     audio.save()
 
+
 def extract_audio_notes(audio: Audio):
     # Save extracted notes if needed
-    note= extract_important_notes(audio.transcript)
+    note = extract_important_notes(audio.transcript)
     try:
         note_json = json.loads(note)
         audio.notes = json.dumps(note_json.get("grammar", ""))
         audio.vocabulary_items = json.dumps(note_json.get("vocabulary", []))
-        audio.status = PostStatus.EXTRACT_NOTE
     except json.JSONDecodeError as e:
-        audio.status = PostStatus.EXTRACT_NOTE
         print(f"Error decoding JSON: {e}")
-   
+
     finally:
+        audio.status = PostStatus.EXTRACT_NOTE
         audio.save()
 
-def enable_audio(audio: Audio):
 
+def translate_audio_text(audio: Audio):
+    CHUNK_SIZE = 20
+    if audio.transcript_json:
+        translated_transcript = []
+        transcript_length = len(audio.transcript_json)
+        for i in range(0, transcript_length, CHUNK_SIZE):
+            chunk = audio.transcript_json[i : i + CHUNK_SIZE]
+            translated_chunk = translate_text(chunk)
+            translated_transcript.extend(translated_chunk)
+        audio.transcript_json = translated_transcript
+    audio.status = PostStatus.TRANSLATE_TEXT
+    audio.save()
+
+
+def enable_audio(audio: Audio):
     audio.status = PostStatus.ENABLE
     audio.save()
 
@@ -105,6 +125,7 @@ STEP_ACTIONS = {
     PostStatus.TRANSCRIBE: transcribe_audio,
     PostStatus.FORMAT_TEXT: format_audio_text,
     PostStatus.EXTRACT_NOTE: extract_audio_notes,
+    PostStatus.TRANSLATE_TEXT: translate_audio_text,
     PostStatus.ENABLE: enable_audio,
 }
 
@@ -116,12 +137,11 @@ def process_audio(audio_id: int):
     Each step is only executed once and retried up to 3 times if it fails.
     """
     try:
-        
-        rand_int = random.randint(1,10)
+        rand_int = random.randint(1, 10)
         time.sleep(rand_int)
         audio = Audio.objects.get(id=audio_id)
         print(f"start process after {rand_int}s for audio with id {audio_id}")
-        
+
         current_index = STEP_ORDER.index(audio.status)
 
         # Loop through current and all next steps
@@ -133,33 +153,39 @@ def process_audio(audio_id: int):
             max_retries = 3
             for attempt in range(1, max_retries + 1):
                 try:
-                    print(f"Audio {audio_id}: running step '{status}' (attempt {attempt}/{max_retries})")
+                    print(
+                        f"Audio {audio_id}: running step '{status}' (attempt {attempt}/{max_retries})"
+                    )
                     action(audio)
                     print(f"Audio {audio_id}: completed step '{status}'")
                     break  # success → move to next step
                 except Exception as e:
-                    print(f"Audio {audio_id}: step '{status}' failed on attempt {attempt}: {e}")
+                    print(
+                        f"Audio {audio_id}: step '{status}' failed on attempt {attempt}: {e}"
+                    )
                     if attempt < max_retries:
                         print("Retrying in 2 seconds...")
                         time.sleep(2)
                     else:
-                        print(f"Audio {audio_id}: step '{status}' failed after {max_retries} attempts.")
+                        print(
+                            f"Audio {audio_id}: step '{status}' failed after {max_retries} attempts."
+                        )
                         raise  # stop processing further steps
 
     except Audio.DoesNotExist:
         print(f"Audio with ID {audio_id} not found.")
 
 
-
 @shared_task
-def create_audio_task(title:str, file_name:str, uploaded_path_file:str, 
-                     audio_src:str):
-    status:str =  PostStatus.UPLOAD
+def create_audio_task(
+    title: str, file_name: str, uploaded_path_file: str, audio_src: str
+):
+    status: str = PostStatus.UPLOAD
     audio = Audio.objects.create(
         title=title or file_name,
         uploaded_url=uploaded_path_file,
-        audio_src= audio_src,
-         status=status,
+        audio_src=audio_src,
+        status=status,
     )
     process_audio.delay(audio.id)
     print(f"Audio {audio.id} created and processing task triggered.")
