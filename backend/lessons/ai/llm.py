@@ -86,7 +86,7 @@ def extract_important_notes(text: str, model: str = "gpt-4o-mini") -> str:
 
 
 
-def translate_text(transcript_dict: list[dict], model: str = "gpt-4o-mini") -> list[TranslateResponse]:
+def translate_text(transcript_dict: list[dict], model: str = "gpt-4o-mini") -> ListTranslateResponse:
     try:
         response = client.chat.completions.parse(
             model=model,
@@ -100,7 +100,8 @@ def translate_text(transcript_dict: list[dict], model: str = "gpt-4o-mini") -> l
             response_format=ListTranslateResponse,
         )
         data = json.loads(response.choices[0].message.content)
-        return ListTranslateResponse(**data).transcript
+        obj = ListTranslateResponse(**data)
+        return obj.model_dump()["transcript"]
     except Exception as e:
         raise e 
 

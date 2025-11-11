@@ -71,8 +71,8 @@ def transcribe_audio(audio: Audio):
         )
         audio.transcript_json = convert_vtt_to_json(audio.transcript)
     else:
-        if not audio.transcript_json:
-            audio.transcript_json = convert_vtt_to_json(audio.transcript)
+        vtt_dict =  convert_vtt_to_json(audio.transcript)
+        audio.transcript_json = vtt_dict
 
     audio.status = PostStatus.TRANSCRIBE
     audio.save()
@@ -101,17 +101,37 @@ def extract_audio_notes(audio: Audio):
 
 
 def translate_audio_text(audio: Audio):
-    CHUNK_SIZE = 20
+    CHUNK_SIZE = 30
+    OVERLAP = 5  # number of overlapping items between chunks
+
     if audio.transcript_json:
         translated_transcript = []
-        transcript_length = len(audio.transcript_json)
-        for i in range(0, transcript_length, CHUNK_SIZE):
-            chunk = audio.transcript_json[i : i + CHUNK_SIZE]
+        transcript = audio.transcript_json
+        transcript_length = len(transcript)
+
+        # Step through with overlap
+        for i in range(0, transcript_length, CHUNK_SIZE - OVERLAP):
+            print(f"Translating chunk {i} of {transcript_length}")
+            chunk = transcript[i : i + CHUNK_SIZE]
+
+            # translate current chunk
             translated_chunk = translate_text(chunk)
+
+            # avoid duplicate overlap items except for the first chunk
+            if i > 0:
+                translated_chunk = translated_chunk[OVERLAP:]
+
             translated_transcript.extend(translated_chunk)
-        audio.transcript_json = json.dumps(translated_transcript)
+
+            # stop if we've reached or passed the end
+            if i + CHUNK_SIZE >= transcript_length:
+                break
+
+        audio.transcript_json = translated_transcript
+    
     audio.status = PostStatus.TRANSLATE_TEXT
     audio.save()
+
 
 
 def enable_audio(audio: Audio):

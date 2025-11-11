@@ -27,20 +27,30 @@ def extract_url_and_filename(text: str):
     return {"url": url, "title": file_name}
 
 
-def convert_vtt_to_json(vtt_text):
-    pattern = re.compile(r'(\d{2}:\d{2}\.\d{3}) --> (\d{2}:\d{2}\.\d{3})\n(.*?)\n(?=\d{2}:\d{2}\.\d{3}|$)', re.S)
+def convert_vtt_to_json(vtt_text: str):
+    # Normalize newlines
+    vtt_text = vtt_text.replace('\r\n', '\n').replace('\r', '\n')
+
+    # Ignore header if present
+    vtt_text = re.sub(r'^WEBVTT.*?\n+', '', vtt_text, flags=re.S)
+
+    # More tolerant regex for caption blocks
+    pattern = re.compile(
+        r'(\d{2}:\d{2}\.\d{3})\s*-->\s*(\d{2}:\d{2}\.\d{3})\s*\n(.*?)(?=\n{2,}|\Z)',
+        re.S
+    )
+
     captions = []
-    
     for match in pattern.finditer(vtt_text):
         start, end, text = match.groups()
         captions.append({
-            "start": start,
-            "end": end,
+            "start": start.strip(),
+            "end": end.strip(),
             "text": text.strip().replace('\n', ' '),
             "fa_text": "",
         })
-    
-    return {"captions": captions}
 
+    print(f"Extracted {len(captions)} captions")
+    return captions
 
     
