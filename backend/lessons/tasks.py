@@ -109,7 +109,7 @@ def translate_audio_text(audio: Audio):
             chunk = audio.transcript_json[i : i + CHUNK_SIZE]
             translated_chunk = translate_text(chunk)
             translated_transcript.extend(translated_chunk)
-        audio.transcript_json = translated_transcript
+        audio.transcript_json = json.dumps(translated_transcript)
     audio.status = PostStatus.TRANSLATE_TEXT
     audio.save()
 
