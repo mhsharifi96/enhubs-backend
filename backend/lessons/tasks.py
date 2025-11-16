@@ -101,7 +101,7 @@ def extract_audio_notes(audio: Audio):
 
 
 def translate_audio_text(audio: Audio):
-    CHUNK_SIZE = 10
+    CHUNK_SIZE = 15
     OVERLAP = 2  # number of overlapping items between chunks
 
     if audio.transcript_json:
