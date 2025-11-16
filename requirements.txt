@@ -1,6 +1,5 @@
 Django==5.2
 djangorestframework
-psycopg2-binary==2.9.7  # if you plan to use PostgreSQL
 assemblyai
 openai
 django-cors-headers
@@ -13,3 +12,4 @@ djangorestframework-simplejwt
 googletrans
 python-telegram-bot
 python-telegram-bot[socks]
+psycopg2-binary

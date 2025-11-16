@@ -101,8 +101,8 @@ def extract_audio_notes(audio: Audio):
 
 
 def translate_audio_text(audio: Audio):
-    CHUNK_SIZE = 30
-    OVERLAP = 5  # number of overlapping items between chunks
+    CHUNK_SIZE = 10
+    OVERLAP = 2  # number of overlapping items between chunks
 
     if audio.transcript_json:
         translated_transcript = []
@@ -128,6 +128,7 @@ def translate_audio_text(audio: Audio):
                 break
 
         audio.transcript_json = translated_transcript
+        # TODO : add field to audio model to save the translated transcript
     
     audio.status = PostStatus.TRANSLATE_TEXT
     audio.save()
