@@ -91,18 +91,42 @@ def translate_text(transcript_dict: list[dict], model: str = "gpt-4o-mini") -> L
         response = client.chat.completions.parse(
             model=model,
             messages=[
-                {"role": "system", "content": "You are a professional translator. Translate the text into Persian."},
-                {"role": "user", "content": "The transcript is a list of dictionaries with the following keys: start_time, end_time, text, fa_text. \
-                    Translate the text into Persian. and add the fa_text key to the dictionary. \
-                        be careful to not change the start_time and end_time keys. and text_fa should be the translated text and meaningful."},
-                {"role": "user", "content": f"transcript: {transcript_dict}"}
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a professional Persian translator with expertise in translating media transcripts. "
+                        "Your job is to produce fluent, natural, and context-aware Persian translations."
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        "The transcript is a list of dictionaries with the keys: start_time, end_time, text, fa_text.\n\n"
+                        "Your tasks:\n"
+                        "1. Translate the value of `text` into meaningful, fluent Persian.\n"
+                        "2. Add or update `fa_text` with the correct Persian translation.\n"
+                        "3. DO NOT modify `start_time` and `end_time` under any circumstances.\n"
+                        "4. Use context awareness:\n"
+                        "   - Look at the previous and next segments when translating.\n"
+                        "   - If a sentence continues into the next segment, translate it cohesively.\n"
+                        "   - Ensure the final translation reads smoothly and consistently.\n\n"
+                        "Return the same list of dictionaries, only adding/updating the `fa_text` key with the translation."
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": f"transcript: {transcript_dict}"
+                }
             ],
             response_format=ListTranslateResponse,
         )
+
         data = json.loads(response.choices[0].message.content)
         obj = ListTranslateResponse(**data)
         return obj.model_dump()["transcript"]
+
     except Exception as e:
-        raise e 
+        raise e
+
 
 
