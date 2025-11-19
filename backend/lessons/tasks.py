@@ -71,8 +71,7 @@ def transcribe_audio(audio: Audio):
         )
         audio.transcript_json = convert_vtt_to_json(audio.transcript)
     else:
-        vtt_dict =  convert_vtt_to_json(audio.transcript)
-        audio.transcript_json = vtt_dict
+        audio.transcript_json = convert_vtt_to_json(audio.transcript)    
 
     audio.status = PostStatus.TRANSCRIBE
     audio.save()
@@ -87,22 +86,26 @@ def format_audio_text(audio: Audio):
 
 def extract_audio_notes(audio: Audio):
     # Save extracted notes if needed
-    note = extract_important_notes(audio.transcript)
-    try:
-        note_json = json.loads(note)
-        audio.notes = json.dumps(note_json.get("grammar", ""))
-        audio.vocabulary_items = json.dumps(note_json.get("vocabulary", []))
-    except json.JSONDecodeError as e:
-        print(f"Error decoding JSON: {e}")
+    if not audio.notes or not audio.vocabulary_items:
+        note = extract_important_notes(audio.transcript)
+        try:
+            note_json = json.loads(note)
+            audio.notes = json.dumps(note_json.get("grammar", ""))
+            audio.vocabulary_items = json.dumps(note_json.get("vocabulary", []))
+        except json.JSONDecodeError as e:
+            print(f"Error decoding JSON: {e}")
 
-    finally:
-        audio.status = PostStatus.EXTRACT_NOTE
-        audio.save()
+        finally:
+            audio.status = PostStatus.EXTRACT_NOTE
+            audio.save()
 
 
 def translate_audio_text(audio: Audio):
     CHUNK_SIZE = 15
     OVERLAP = 2  # number of overlapping items between chunks
+
+    if not audio.transcript_json:
+        audio.transcript_json = convert_vtt_to_json(audio.transcript)
 
     if audio.transcript_json:
         translated_transcript = []
@@ -115,7 +118,12 @@ def translate_audio_text(audio: Audio):
             chunk = transcript[i : i + CHUNK_SIZE]
 
             # translate current chunk
-            translated_chunk = translate_text(chunk)
+            try:
+                translated_chunk = translate_text(chunk)
+            except Exception as e:
+                print(f"Error translating chunk: {str(e)}")
+                translated_chunk = chunk
+                continue
 
             # avoid duplicate overlap items except for the first chunk
             if i > 0:
