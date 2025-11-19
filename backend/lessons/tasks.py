@@ -102,14 +102,14 @@ def extract_audio_notes(audio: Audio):
 
 def translate_audio_text(audio: Audio):
     CHUNK_SIZE = 15
-    OVERLAP = 2  # number of overlapping items between chunks
+    OVERLAP = 1  # number of overlapping items between chunks
 
     if not audio.transcript_json:
         audio.transcript_json = convert_vtt_to_json(audio.transcript)
 
-    if audio.transcript_json:
+    transcript = audio.transcript_json
+    if transcript:
         translated_transcript = []
-        transcript = audio.transcript_json
         transcript_length = len(transcript)
 
         # Step through with overlap
@@ -118,12 +118,11 @@ def translate_audio_text(audio: Audio):
             chunk = transcript[i : i + CHUNK_SIZE]
 
             # translate current chunk
-            try:
-                translated_chunk = translate_text(chunk)
-            except Exception as e:
-                print(f"Error translating chunk: {str(e)}")
-                translated_chunk = chunk
-                continue
+            
+            success, translated_chunk = translate_text(chunk)
+            if not success:
+                _, translated_chunk = translate_text(chunk)
+        
 
             # avoid duplicate overlap items except for the first chunk
             if i > 0:
