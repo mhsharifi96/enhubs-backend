@@ -1,7 +1,7 @@
 
 from celery import shared_task
 from leitnerbox.models import Card
-from backend.lessons.ai.llm import extract_keywords_or_idioms
+from lessons.ai.llm import extract_keywords_or_idioms
 
 @shared_task
 def extract_llm_keywords_for_card(card_id):
