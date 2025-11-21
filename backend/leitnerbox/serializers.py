@@ -11,7 +11,7 @@ class CardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
         fields = [
-            'id', 'front_text', 'back_text',
+            'id', 'front_text', 'back_text','llm_extractions',
             'interval', 'repetition', 'ease_factor'
         ]
         read_only_fields = [ 'interval', 'repetition', 'ease_factor']

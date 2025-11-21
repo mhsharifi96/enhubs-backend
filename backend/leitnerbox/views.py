@@ -125,7 +125,7 @@ class CardViewSet(viewsets.ModelViewSet):
         # Create a deck if the user doesn't already have one
         deck, _ = Deck.objects.get_or_create(
             owner=user,
-            defaults={"name": f"{user.username}'s default deck"}
+            defaults={"name": f"{user.username}'s deck"}
         )
 
         card = serializer.save(owner=user, deck=deck)
