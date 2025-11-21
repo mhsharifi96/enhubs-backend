@@ -17,6 +17,7 @@ class Card(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owner_cards')
     front_text = models.CharField(max_length=500)  # Question or English word
     back_text = models.CharField(max_length=600,null=True,blank=True)  # Answer or meaning
+    llm_extractions = models.JSONField(null=True, blank=True)  # Store LLM extracted data
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     interval = models.IntegerField(default=1)  # Spaced repetition interval in days

@@ -8,6 +8,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from datetime import timedelta
+from leitnerbox.tasks import extract_llm_keywords_for_card
 
 
 
@@ -127,7 +128,8 @@ class CardViewSet(viewsets.ModelViewSet):
             defaults={"name": f"{user.username}'s default deck"}
         )
 
-        serializer.save(owner=user, deck=deck)
+        card = serializer.save(owner=user, deck=deck)
+        extract_llm_keywords_for_card.delay(card_id=card.id)
 
     def retrieve(self, request, *args, **kwargs):
         """Get a single card by ID (only if it belongs to the current user)."""

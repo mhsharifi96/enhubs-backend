@@ -16,6 +16,13 @@ class TranslateResponse(BaseModel):
 class ListTranslateResponse(BaseModel):
     transcript : list[TranslateResponse]
 
+class KeyWordItem(BaseModel):
+    word: str
+    translation: str
+
+class ListKeyWordItem(BaseModel):
+    items: list[KeyWordItem]
+
 
 client = OpenAI(base_url=base_url, 
                 api_key=api_key)
@@ -131,3 +138,52 @@ def translate_text(transcript_dict: list[dict], model: str = "gpt-4o-mini") -> t
 
 
 
+def extract_keywords_or_idioms(
+    sentence: str, 
+    model: str = "gpt-4o-mini"
+) -> tuple[bool, list[dict]]:
+    """
+    Extract important words or idioms from text and translate to Persian.
+    """
+
+    try:
+        response = client.chat.completions.parse(
+            model=model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are an expert English linguist. "
+                        "Your job is to extract important words, verbs, keywords,  phrases, or idioms "
+                        "from the user's sentence and translate them into natural Persian.\n\n"
+                        "Rules:\n"
+                        "- Extract nouns, verbs, adjectives, adverbs, and idioms.\n"
+                        "- Remove common stopwords.\n"
+                        "- Lemmatize words when needed.\n"
+                        "- For idioms, output the actual idiom and its Persian meaning.\n"
+                        "- Return ONLY the extracted items and their translations"
+                        "- Sometimes some keyword has mulitiple meanings, provide all meanings in translation and sperate with commas.\n\n"
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": f"Sentence: {sentence}"
+                }
+            ],
+            response_format=ListKeyWordItem,
+        )
+
+        # Convert message to JSON
+        data = json.loads(response.choices[0].message.content)
+
+        # Validate with Pydantic
+        obj = ListKeyWordItem(**data)
+
+        # Convert to Python dict list
+        result = [item.model_dump() for item in obj.items]
+
+        return True, result
+
+    except Exception as e:
+        print(f"Error in extract_keywords_or_idioms function: {str(e)}")
+        return False, []
