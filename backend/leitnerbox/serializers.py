@@ -14,7 +14,7 @@ class CardSerializer(serializers.ModelSerializer):
             'id', 'front_text', 'back_text','llm_extractions',
             'interval', 'repetition', 'ease_factor'
         ]
-        read_only_fields = [ 'interval', 'repetition', 'ease_factor']
+        read_only_fields = [ 'interval', 'repetition', 'ease_factor','llm_extractions']
 
 class ReviewLogSerializer(serializers.ModelSerializer):
     quality_display = serializers.CharField(source='get_quality_display', read_only=True)
