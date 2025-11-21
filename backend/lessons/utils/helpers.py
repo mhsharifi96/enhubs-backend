@@ -44,8 +44,8 @@ def convert_vtt_to_json(vtt_text: str):
     for match in pattern.finditer(vtt_text):
         start, end, text = match.groups()
         captions.append({
-            "start": start.strip(),
-            "end": end.strip(),
+            "start_time": start.strip(),
+            "end_time": end.strip(),
             "text": text.strip().replace('\n', ' '),
             "fa_text": "",
         })
