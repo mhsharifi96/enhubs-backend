@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'lessons',
     'leitnerbox',
     'chat',
+    'blog',
     ]
 
 MIDDLEWARE = [

@@ -21,10 +21,10 @@ urlpatterns = [
     path('api/register/', RegisterView.as_view(), name='register'),
     path('api/password-reset/', PasswordResetRequestView.as_view(), name='password_reset'),
     path('api/password-reset-confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-
     path("api/", include("lessons.urls")),
     path("api/leitnerbox/", include("leitnerbox.urls")),
     path("api/chat/", include("chat.urls")),
+    path("api/blog/", include("blog.urls")),
 ]
 
 if settings.DEBUG:
