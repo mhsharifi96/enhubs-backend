@@ -10,7 +10,7 @@ class DeckSerializer(serializers.ModelSerializer):
 
 
 class CardSerializer(serializers.ModelSerializer):
-    lesson_id = serializers.IntegerField(allow_null=True)
+    lessonId = serializers.CharField(required=False)
 
     class Meta:
         model = Card
@@ -22,7 +22,7 @@ class CardSerializer(serializers.ModelSerializer):
             "interval",
             "repetition",
             "ease_factor",
-            "lesson_id",
+            "lessonId",
         ]
         read_only_fields = ["interval", "repetition", "ease_factor", "llm_extractions"]
 
