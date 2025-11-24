@@ -24,7 +24,7 @@ class CardSerializer(serializers.ModelSerializer):
             "ease_factor",
             "lessonId",
         ]
-        read_only_fields = ["interval", "repetition", "ease_factor", "llm_extractions"]
+        read_only_fields = ["interval", "repetition", "ease_factor", "llm_extractions","lessonId"]
 
 
 class ReviewLogSerializer(serializers.ModelSerializer):

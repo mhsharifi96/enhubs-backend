@@ -124,6 +124,7 @@ class CardViewSet(viewsets.ModelViewSet):
         deck_name = f"{user.username}'s deck"
         if serializer.validated_data.get('lesson_id'):
             deck_name = f"Lesson {serializer.validated_data.get('lesson_id')} Deck"
+            serializer.validated_data.pop()
         # Create a deck if the user doesn't already have one
         deck, _ = Deck.objects.get_or_create(
             owner=user,
