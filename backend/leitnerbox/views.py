@@ -121,11 +121,13 @@ class CardViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = self.request.user
-
+        deck_name = f"{user.username}'s deck"
+        if serializer.validated_data.get('lesson_id'):
+            deck_name = f"Lesson {serializer.validated_data.get('lesson_id')} Deck"
         # Create a deck if the user doesn't already have one
         deck, _ = Deck.objects.get_or_create(
             owner=user,
-            defaults={"name": f"{user.username}'s deck"}
+            defaults={"name": deck_name}
         )
 
         card = serializer.save(owner=user, deck=deck)
