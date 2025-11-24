@@ -33,18 +33,25 @@ class TagSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "created_at", "updated_at")
         extra_kwargs = {"slug": {"required": False}}
 
+class MinimaltagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = [
+            "name",
+            "slug",
+        ]
+class MinimalCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = [
+            "name",
+            "slug",
+        ]
 
-class PostSerializer(serializers.ModelSerializer):
-    category = serializers.SlugRelatedField(
-        slug_field="slug", queryset=Category.objects.all()
-    )
-    tags = serializers.SlugRelatedField(
-        slug_field="slug",
-        queryset=Tag.objects.all(),
-        many=True,
-        required=False,
-        default=list,
-    )
+
+class SinglePostSerializer(serializers.ModelSerializer):
+    category = CategorySerializer()
+    tags = TagSerializer(many=True)
 
     class Meta:
         model = Post
@@ -59,6 +66,26 @@ class PostSerializer(serializers.ModelSerializer):
             "is_published",
             "meta_title",
             "meta_description",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ("id", "created_at", "updated_at")
+
+
+class PostSerializer(serializers.ModelSerializer):
+    category = MinimalCategorySerializer()
+    tags = MinimaltagSerializer(many=True)
+
+    class Meta:
+        model = Post
+        fields = [
+            "id",
+            "title",
+            "slug",
+            "excerpt",
+            "category",
+            "tags",
+            "is_published",
             "created_at",
             "updated_at",
         ]

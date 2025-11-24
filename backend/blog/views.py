@@ -1,8 +1,9 @@
 from rest_framework import filters, viewsets
+from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import Category, Post, Tag
-from .serializers import CategorySerializer, PostSerializer, TagSerializer
-
+from blog.models import Category, Post, Tag
+from blog.serializers import CategorySerializer, PostSerializer, TagSerializer, SinglePostSerializer
+from blog.filters import PostFilter
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -28,19 +29,22 @@ class PostViewSet(viewsets.ModelViewSet):
         .prefetch_related("tags")
         .order_by("-created_at")
     )
-    serializer_class = PostSerializer
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return SinglePostSerializer
+        return PostSerializer
+    
     lookup_field = "slug"
-    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
+    filter_backends = (filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,)
     search_fields = (
         "title",
         "slug",
         "excerpt",
-        "content",
-        "meta_title",
-        "meta_description",
     )
     ordering_fields = (
         "created_at",
         "updated_at",
         "title",
     )
+    filterset_class = PostFilter
+
