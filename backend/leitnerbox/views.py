@@ -29,6 +29,22 @@ class DeckViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+    
+    @decorators.action(detail=True, methods=["get"], url_path="reviews")
+    def review_specific_deck(self, request, pk=None):
+        """
+        List all cards in this deck with pagination.
+        GET /api/leitnerbox/decks/{id}/reviews/
+        """
+        cards = Card.objects.filter(
+            deck_id=pk,
+            owner=request.user,
+            next_review_at__lte=timezone.now()
+        ).order_by("next_review_at")
+        paginator = StandardResultsSetPagination()
+        page = paginator.paginate_queryset(cards, request)
+        serializer = CardSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     @decorators.action(detail=False, methods=["get"], url_path="reviews")
     def reviews(self, request):
@@ -132,7 +148,7 @@ class CardViewSet(viewsets.ModelViewSet):
         # Create a deck if the user doesn't already have one
         try:
             deck = Deck.objects.get(owner=user, name=deck_name)
-        except Deck.DoesNotExist:
+        except Deck.DoesNotExist: 
             deck = Deck.objects.create(owner=user, name=deck_name, lessonId=lessonId)
 
         card = serializer.save(owner=user, deck=deck)
