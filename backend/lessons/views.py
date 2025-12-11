@@ -1,6 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
+from django.http import HttpResponse
+from django.urls import reverse
 
 from rest_framework import viewsets, mixins
 from .models import Audio, Category, PostStatus, AudioHistory , Speaking , SpeakingStatus
@@ -9,6 +11,7 @@ from .serializers import AudioSerializer, CategorySerializer, SpeakingSerializer
 from rest_framework.pagination import PageNumberPagination
 from googletrans import Translator
 from django.db.models import Q
+from utils.sitemaps import build_sitemap_xml
 
 import asyncio
 
@@ -136,3 +139,37 @@ class TranslateAPIView(APIView):
                         {"error": f"Translation failed after {max_retries} attempts: {str(e)}"},
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR
                     )
+
+
+class LessonsSitemapAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        urls = []
+
+        audio_lessons = (
+            Audio.objects.filter(status=PostStatus.ENABLE)
+            .only("id", "updated_at")
+            .order_by("-updated_at")
+        )
+        for audio in audio_lessons:
+            loc = request.build_absolute_uri(
+                reverse("audio-lesson-detail", kwargs={"pk": audio.pk})
+            )
+            lastmod = audio.updated_at.isoformat() if audio.updated_at else None
+            urls.append({"loc": loc, "lastmod": lastmod})
+
+        speaking_lessons = (
+            Speaking.objects.filter(status=SpeakingStatus.ENABLE)
+            .only("id", "updated_at")
+            .order_by("-updated_at")
+        )
+        for speaking in speaking_lessons:
+            loc = request.build_absolute_uri(
+                reverse("speaking-lesson-detail", kwargs={"pk": speaking.pk})
+            )
+            lastmod = speaking.updated_at.isoformat() if speaking.updated_at else None
+            urls.append({"loc": loc, "lastmod": lastmod})
+
+        xml = build_sitemap_xml(urls)
+        return HttpResponse(xml, content_type="application/xml")

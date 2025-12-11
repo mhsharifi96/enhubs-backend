@@ -1,5 +1,9 @@
-from rest_framework import filters, viewsets
+from django.http import HttpResponse
+from django.urls import reverse
+from rest_framework import filters, permissions, viewsets
+from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
+from utils.sitemaps import build_sitemap_xml
 
 from blog.models import Category, Post, Tag
 from blog.serializers import CategorySerializer, PostSerializer, TagSerializer, SinglePostSerializer
@@ -48,3 +52,24 @@ class PostViewSet(viewsets.ModelViewSet):
     )
     filterset_class = PostFilter
 
+
+class BlogSitemapAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        posts = (
+            Post.objects.filter(is_published=True)
+            .only("slug", "updated_at")
+            .order_by("-updated_at")
+        )
+        urls = []
+
+        for post in posts:
+            loc = request.build_absolute_uri(
+                reverse("post-detail", kwargs={"slug": post.slug})
+            )
+            lastmod = post.updated_at.isoformat() if post.updated_at else None
+            urls.append({"loc": loc, "lastmod": lastmod})
+
+        xml = build_sitemap_xml(urls)
+        return HttpResponse(xml, content_type="application/xml")
