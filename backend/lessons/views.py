@@ -49,10 +49,10 @@ class AudioLessionViewSet(viewsets.ReadOnlyModelViewSet):
     
     def get_permissions(self):
         """Authenticate only for retrieve endpoint."""
-        if self.action == 'retrieve':
-            permission_classes = [permissions.IsAuthenticated]
-        else:
-            permission_classes = [permissions.AllowAny]
+        # if self.action == 'retrieve':
+        #     permission_classes = [permissions.IsAuthenticated]
+        # else:
+        permission_classes = [permissions.AllowAny]
         return [permission() for permission in permission_classes]
 
 
