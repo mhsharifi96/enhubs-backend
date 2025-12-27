@@ -106,6 +106,7 @@ class SpeakingAnswer(models.Model):
     speaking = models.ForeignKey('Speaking', on_delete=models.CASCADE, related_name='answers')
     answer_text = models.TextField(null=True, blank=True)
     translate_text = models.TextField(null=True, blank=True)
+    tags = models.ManyToManyField(tag, blank=True)
     audio_url = models.URLField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
