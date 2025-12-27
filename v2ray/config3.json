@@ -1,0 +1,229 @@
+{
+  "log": {},
+  "inbounds": [
+      {
+        "protocol": "socks",
+        "port": 10808,
+        "listen": "127.0.0.1",
+        "settings": {
+          "userLevel": 8,
+          "auth": "noauth",
+          "udp": true
+        },
+        "tag": "socks"
+      },
+      {
+        "protocol": "socks",
+        "port": 1087,
+        "listen": "127.0.0.1",
+        "settings": {
+          "userLevel": 8,
+          "auth": "noauth",
+          "udp": true
+        },
+        "tag": "directSocks"
+      },
+      {
+        "protocol": "dokodemo-door",
+        "port": 62789,
+        "listen": "[::1]",
+        "settings": {
+          "address": "[::1]"
+        },
+        "tag": "api"
+      }
+    ],
+  "outbounds": [
+      {
+        "settings": {
+          "vnext": [
+            {
+              "address": "ir1.theantinthemidle.com",
+              "port": 35024,
+              "users": [
+                {
+                  "alterId": 0,
+                  "id": "0f2ffe2b-febc-4390-8b98-b323eb50071f",
+                  "security": "aes-128-gcm",
+                  "level": 0,
+                  "email": ""
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "tcpSettings": {
+            "header": {
+              "type": "http",
+              "request": {
+                "path": [
+                  "/"
+                ],
+                "method": "GET",
+                "headers": {
+                  "Connection": [
+                    "keep-alive"
+                  ],
+                  "Accept-Encoding": [
+                    "gzip, deflate"
+                  ],
+                  "Pragma": [
+                    "no-cache"
+                  ],
+                  "Host": [
+                    "bpi"
+                  ],
+                  "User-Agent": [
+                    "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36",
+                    "Mozilla/5.0 (iPhone; CPU iPhone OS 10_0_2 like Mac OS X) AppleWebKit/601.1 (KHTML, like Gecko) CriOS/53.0.2785.109 Mobile/14A456 Safari/601.1.46"
+                  ]
+                },
+                "version": "1.1"
+              }
+            }
+          }
+        },
+        "protocol": "vmess",
+        "tag": "proxy",
+        "mux": {
+          "enabled": false,
+          "xudpConcurrency": 128,
+          "concurrency": 50,
+          "xudpProxyUDP443": "allow"
+        }
+      },
+      {
+        "settings": {
+          "userLevel": 8,
+          "fragment": {
+            "packets": "tlshello",
+            "length": "80-250",
+            "interval": "10-100"
+          }
+        },
+        "streamSettings": {
+          "sockopt": {
+            "tcpNoDelay": true
+          }
+        },
+        "protocol": "freedom",
+        "tag": "fragment"
+      }
+    ],
+  "api": {
+      "tag": "api",
+      "services": [
+        "StatsService"
+      ]
+    },
+  "dns": {
+      "disableFallback": true,
+      "queryStrategy": "UseIP",
+      "disableFallbackIfMatch": true,
+      "hosts": {
+        "dns.quad9.net": [
+          "9.9.9.9",
+          "149.112.112.112",
+          "2620:fe::fe",
+          "2620:fe::9"
+        ],
+        "common.dot.dns.yandex.net": [
+          "77.88.8.8",
+          "77.88.8.1",
+          "2a02:6b8::feed:0ff",
+          "2a02:6b8:0:1::feed:0ff"
+        ],
+        "one.one.one.one": [
+          "1.1.1.1",
+          "1.0.0.1",
+          "2606:4700:4700::1111",
+          "2606:4700:4700::1001"
+        ],
+        "dns.google": [
+          "8.8.8.8",
+          "8.8.4.4",
+          "2001:4860:4860::8888",
+          "2001:4860:4860::8844"
+        ],
+        "dns.cloudflare.com": [
+          "104.16.132.229",
+          "104.16.133.229",
+          "2606:4700::6810:84e5",
+          "2606:4700::6810:85e5"
+        ],
+        "cloudflare-dns.com": [
+          "104.16.248.249",
+          "104.16.249.249",
+          "2606:4700::6810:f8f9",
+          "2606:4700::6810:f9f9"
+        ],
+        "dns.alidns.com": [
+          "223.5.5.5",
+          "223.6.6.6",
+          "2400:3200::1",
+          "2400:3200:baba::1"
+        ],
+        "dot.pub": [
+          "1.12.12.12",
+          "120.53.53.53"
+        ]
+      },
+      "disableCache": true,
+      "tag": "dnsQuery",
+      "servers": [
+        {
+          "address": "8.8.8.8",
+          "skipFallback": false
+        }
+      ]
+    },
+  "stats": {},
+  "routing": {
+        "rules": [
+          {
+            "outboundTag": "api",
+            "type": "field",
+            "inboundTag": [
+              "api"
+            ]
+          },
+          {
+            "outboundTag": "proxy",
+            "type": "field",
+            "inboundTag": [
+              "dnsQuery"
+            ]
+          },
+          {
+            "outboundTag": "direct",
+            "type": "field",
+            "inboundTag": [
+              "directSocks"
+            ]
+          }
+        ],
+        "domainStrategy": "AsIs",
+        "balancers": []
+      },
+  "policy": {
+        "system": {
+          "statsOutboundUplink": true,
+          "statsInboundDownlink": true,
+          "statsInboundUplink": true,
+          "statsOutboundDownlink": true
+        },
+        "levels": {
+          "8": {
+            "connIdle": 30,
+            "uplinkOnly": 1,
+            "statsUserUplink": false,
+            "downlinkOnly": 1,
+            "handshake": 4,
+            "bufferSize": 0,
+            "statsUserDownlink": false
+          }
+        }
+      }
+}
