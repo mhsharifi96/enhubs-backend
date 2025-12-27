@@ -87,9 +87,9 @@ class AudioHistory(models.Model):
 
 class Speaking(models.Model):
     title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255,unique=True)
     question = models.TextField(null=True,blank=True)
     text = models.TextField(null=True, blank=True)
-    prompt_instructions = models.TextField(null=True, blank=True)
     language = models.CharField(max_length=30, choices=Language.choices , default=Language.ENGLISH)
     category = models.ForeignKey(Category,on_delete=models.CASCADE,null=True,blank=True)
     tags = models.ManyToManyField(tag, blank=True)
@@ -97,3 +97,18 @@ class Speaking(models.Model):
                             default=PostStatus.INIT)
     created_at = models.DateTimeField(auto_now_add=True)  # automatically set on creation
     updated_at = models.DateTimeField(auto_now=True)      # automatically updated on save
+
+    def __str__(self):
+        return self.title
+
+class SpeakingAnswer(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='speaking_answers')
+    speaking = models.ForeignKey('Speaking', on_delete=models.CASCADE, related_name='answers')
+    answer_text = models.TextField(null=True, blank=True)
+    translate_text = models.TextField(null=True, blank=True)
+    audio_url = models.URLField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s answer to {self.speaking.title}"
