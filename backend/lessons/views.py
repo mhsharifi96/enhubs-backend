@@ -5,8 +5,20 @@ from django.http import HttpResponse
 from django.urls import reverse
 
 from rest_framework import viewsets, mixins
-from .models import Audio, Category, PostStatus, AudioHistory , Speaking , SpeakingStatus
-from .serializers import AudioSerializer, CategorySerializer, SpeakingSerializer
+from lessons.models import (
+    Audio,
+    Category,
+    PostStatus,
+    AudioHistory,
+    Speaking,
+    SpeakingStatus,
+)
+from lessons.serializers import (
+    AudioSerializer,
+    CategorySerializer,
+    SpeakingListSerializer,
+    SpeakingDetailSerializer,
+)
 
 from rest_framework.pagination import PageNumberPagination
 from googletrans import Translator
@@ -16,13 +28,10 @@ from utils.sitemaps import build_sitemap_xml
 import asyncio
 
 
-
-
 class LessonPagination(PageNumberPagination):
     page_size = 10  # number of items per page
-    page_size_query_param = 'page_size'  # allow client to set page size
+    page_size_query_param = "page_size"  # allow client to set page size
     max_page_size = 10  # maximum page size allowed
-
 
 
 class AudioLessionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -30,23 +39,24 @@ class AudioLessionViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = LessonPagination
 
     def get_queryset(self):
-        queryset = Audio.objects.filter(status=PostStatus.ENABLE).order_by('-created_at')
+        queryset = Audio.objects.filter(status=PostStatus.ENABLE).order_by(
+            "-created_at"
+        )
 
         params = self.request.query_params
-        category_name = params.get('category')
+        category_name = params.get("category")
 
         if category_name:
             queryset = queryset.filter(category__name__iexact=category_name)
-        
-        search = params.get('search')
+
+        search = params.get("search")
         if search:
             queryset = queryset.filter(
-                Q(title__icontains=search) |
-                Q(transcript__icontains=search)
+                Q(title__icontains=search) | Q(transcript__icontains=search)
             )
 
         return queryset
-    
+
     def get_permissions(self):
         """Authenticate only for retrieve endpoint."""
         # if self.action == 'retrieve':
@@ -55,13 +65,14 @@ class AudioLessionViewSet(viewsets.ReadOnlyModelViewSet):
         permission_classes = [permissions.AllowAny]
         return [permission() for permission in permission_classes]
 
-
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         response = super().retrieve(request, *args, **kwargs)
 
         if request.user.is_authenticated:
-            history, created = AudioHistory.objects.get_or_create(user=request.user, audio=instance)
+            history, created = AudioHistory.objects.get_or_create(
+                user=request.user, audio=instance
+            )
             if not created:
                 history.views_count += 1
                 history.save(update_fields=["views_count", "updated_at"])
@@ -69,40 +80,37 @@ class AudioLessionViewSet(viewsets.ReadOnlyModelViewSet):
         return response
 
 
-class SpeakingLessionViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = SpeakingSerializer
+class SpeakingLessonViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = LessonPagination
 
+    def get_serializer_class(self):
+        if self.action == "list":
+            return SpeakingListSerializer  # 👈 serializer for list
+        return SpeakingDetailSerializer  # 👈 serializer for retrieve
+
     def get_queryset(self):
-        queryset = Speaking.objects.filter(status=SpeakingStatus.ENABLE).order_by('-created_at')
+        queryset = Speaking.objects.filter(status=SpeakingStatus.ENABLE).order_by(
+            "-created_at"
+        )
 
         params = self.request.query_params
-        category_name = params.get('category')
 
+        category_name = params.get("category")
         if category_name:
             queryset = queryset.filter(category__name__iexact=category_name)
-        
-        search = params.get('search')
+
+        search = params.get("search")
         if search:
             queryset = queryset.filter(
-                Q(title__icontains=search) |
-                Q(transcript__icontains=search)
+                Q(title__icontains=search) | Q(transcript__icontains=search)
             )
 
         return queryset
-    
-    def get_permissions(self):
-        """Authenticate only for retrieve endpoint."""
-        # if self.action == 'retrieve':
-        #     permission_classes = [permissions.IsAuthenticated]
-        # else:
-        permission_classes = [permissions.AllowAny]
-        return [permission() for permission in permission_classes]
-    
 
-class CategoryViewSet(mixins.ListModelMixin,
-                      mixins.RetrieveModelMixin,
-                      viewsets.GenericViewSet):    
+
+class CategoryViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = "slug"
@@ -116,8 +124,9 @@ class TranslateAPIView(APIView):
         target = request.data.get("target", "fa")  # default Persian
 
         if not text:
-            return Response({"error": "Text field is required."},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Text field is required."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         async def translate():
             async with Translator() as translator:
@@ -127,17 +136,21 @@ class TranslateAPIView(APIView):
         for attempt in range(1, max_retries + 1):
             try:
                 translated = asyncio.run(translate())
-                return Response({
-                    "original": text,
-                    "translated": translated.text,
-                    "src_lang": translated.src,
-                    "dest_lang": translated.dest,
-                })
+                return Response(
+                    {
+                        "original": text,
+                        "translated": translated.text,
+                        "src_lang": translated.src,
+                        "dest_lang": translated.dest,
+                    }
+                )
             except Exception as e:
                 if attempt == max_retries:
                     return Response(
-                        {"error": f"Translation failed after {max_retries} attempts: {str(e)}"},
-                        status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                        {
+                            "error": f"Translation failed after {max_retries} attempts: {str(e)}"
+                        },
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     )
 
 

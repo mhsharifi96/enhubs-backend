@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Audio, Category , Speaking, SpeakingAnswer
+from .models import Audio, Category, tag , Speaking, SpeakingAnswer
 import json
 
 
@@ -9,7 +9,10 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
 
-
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = tag
+        fields = ['name', 'slug']
 
 class AudioSerializer(serializers.ModelSerializer):
     notes = serializers.JSONField(required=False, allow_null=True)
@@ -57,7 +60,7 @@ class SpeakingAnswerSerializer(serializers.ModelSerializer):
         ]
 
 
-class SpeakingSerializer(serializers.ModelSerializer):
+class SpeakingDetailSerializer(serializers.ModelSerializer):
     category = serializers.CharField(source='category.name', read_only=True)
     answers = SpeakingAnswerSerializer(many=True, read_only=True)
     class Meta: 
@@ -73,3 +76,21 @@ class SpeakingSerializer(serializers.ModelSerializer):
             "tags"
 
         ]
+
+
+class SpeakingListSerializer(serializers.ModelSerializer):
+    category = serializers.CharField(source='category.name', read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
+    
+    class Meta: 
+        model= Speaking
+        fields = [
+            "id",
+            "slug",
+            "title",
+            "question",
+            "category",
+            "tags"
+
+        ]
+    

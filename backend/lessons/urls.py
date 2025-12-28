@@ -1,11 +1,11 @@
 # lessons/urls.py
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import AudioLessionViewSet, CategoryViewSet, TranslateAPIView , SpeakingLessionViewSet, LessonsSitemapAPIView
+from .views import AudioLessionViewSet, CategoryViewSet, TranslateAPIView , SpeakingLessonViewSet, LessonsSitemapAPIView
 
 router = DefaultRouter()
 router.register(r'lessons/audios', AudioLessionViewSet, basename='audio-lesson')
-router.register(r'lessons/speaking', SpeakingLessionViewSet, basename='speaking-lesson')
+router.register(r'lessons/speaking', SpeakingLessonViewSet, basename='speaking-lesson')
 router.register(r'categories', CategoryViewSet, basename='category')
 
 
