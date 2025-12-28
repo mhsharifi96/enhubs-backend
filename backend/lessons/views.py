@@ -82,6 +82,8 @@ class AudioLessionViewSet(viewsets.ReadOnlyModelViewSet):
 
 class SpeakingLessonViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = LessonPagination
+    lookup_field = "slug"          # 👈 use slug instead of pk
+    lookup_url_kwarg = "slug"      # 👈 optional but explicit
 
     def get_serializer_class(self):
         if self.action == "list":
