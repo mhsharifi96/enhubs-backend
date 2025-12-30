@@ -1,12 +1,10 @@
 import os
-import boto3
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from lessons.utils.s3 import upload_file
 from lessons.utils.helpers import extract_url_and_filename
-from lessons.models import Audio , PostStatus
 from lessons.tasks import create_audio_task
 
 

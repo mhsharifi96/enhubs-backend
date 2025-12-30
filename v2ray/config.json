@@ -2,72 +2,69 @@
   "log": {},
   "inbounds": [
       {
-        "protocol": "shadowsocks",
-        "listen": "127.0.0.1",
-        "port": 10808,
         "tag": "socks",
+        "port": 56922,
         "settings": {
-          "level": 8,
-          "password": "123456",
-          "ota": true,
-          "method": "chacha20-ietf-poly1305",
-          "network": "tcp,udp",
-          "udp": false
-        }
+          "auth": "noauth",
+          "udp": true,
+          "userLevel": 8
+        },
+        "protocol": "socks",
+        "sniffing": {
+          "destOverride": [
+            "tls",
+            "http",
+            "quic"
+          ],
+          "enabled": true,
+          "domainsExcluded": [
+            "courier.push.apple.com"
+          ]
+        },
+        "listen": "0.0.0.0"
       },
       {
-        "protocol": "socks",
-        "listen": "0.0.0.0",
         "port": 1087,
         "tag": "directSocks",
         "settings": {
-          "userLevel": 8,
           "auth": "noauth",
+          "userLevel": 8,
           "udp": true
-        }
+        },
+        "protocol": "socks",
+        "listen": "0.0.0.0"
       },
       {
-        "protocol": "dokodemo-door",
-        "listen": "[::1]",
-        "port": 62789,
+        "port": 56923,
         "tag": "api",
         "settings": {
           "address": "[::1]"
-        }
-      },
-      {
+        },
         "protocol": "dokodemo-door",
-        "listen": "127.0.0.1",
-        "port": 62790,
-        "tag": "inDns",
-        "settings": {
-          "userLevel": 0,
-          "port": 53,
-          "network": "tcp,udp",
-          "timeout": 10,
-          "address": "8.8.8.8"
-        }
+        "listen": "[::1]"
       }
     ],
   "outbounds": [
       {
+        "protocol": "vmess",
         "settings": {
           "vnext": [
             {
               "port": 34044,
-              "address": "ams2.theantinthemidle.com",
+              "address": "finland.novintechworld.shop",
               "users": [
                 {
-                  "id": "561f49fb-0e83-4732-b2af-974caf0bc254",
-                  "level": 0,
                   "alterId": 0,
                   "email": "",
-                  "security": "aes-128-gcm"
+                  "security": "aes-128-gcm",
+                  "level": 8,
+                  "id": "561f49fb-0e83-4732-b2af-974caf0bc254"
                 }
               ]
             }
           ]
         },
+        "tag": "proxy",
         "streamSettings": {
           "network": "tcp",
           "tcpSettings": {
@@ -76,21 +73,20 @@
             }
           }
         },
-        "protocol": "vmess",
-        "tag": "proxy",
         "mux": {
+          "enabled": false,
           "xudpProxyUDP443": "allow",
           "xudpConcurrency": 128,
-          "concurrency": 50,
-          "enabled": false
+          "concurrency": 50
         }
       },
       {
+        "protocol": "freedom",
         "settings": {
           "fragment": {
+            "packets": "tlshello",
             "length": "80-250",
-            "interval": "10-100",
-            "packets": "tlshello"
+            "interval": "10-100"
           },
           "userLevel": 8
         },
@@ -99,7 +95,6 @@
             "tcpNoDelay": true
           }
         },
-        "protocol": "freedom",
         "tag": "fragment"
       }
     ],
@@ -110,70 +105,112 @@
       "tag": "api"
     },
   "dns": {
-      "servers": [
-        {
-          "address": "8.8.8.8",
-          "skipFallback": false
-        }
-      ],
-      "disableFallbackIfMatch": true,
+      "tag": "dnsQuery",
       "disableFallback": true,
       "disableCache": true,
-      "tag": "dnsQuery",
-      "queryStrategy": "UseIP"
+      "hosts": {
+        "dns.google": [
+          "8.8.8.8",
+          "8.8.4.4",
+          "2001:4860:4860::8888",
+          "2001:4860:4860::8844"
+        ],
+        "dns.cloudflare.com": [
+          "104.16.132.229",
+          "104.16.133.229",
+          "2606:4700::6810:84e5",
+          "2606:4700::6810:85e5"
+        ],
+        "cloudflare-dns.com": [
+          "104.16.248.249",
+          "104.16.249.249",
+          "2606:4700::6810:f8f9",
+          "2606:4700::6810:f9f9"
+        ],
+        "common.dot.dns.yandex.net": [
+          "77.88.8.8",
+          "77.88.8.1",
+          "2a02:6b8::feed:0ff",
+          "2a02:6b8:0:1::feed:0ff"
+        ],
+        "one.one.one.one": [
+          "1.1.1.1",
+          "1.0.0.1",
+          "2606:4700:4700::1111",
+          "2606:4700:4700::1001"
+        ],
+        "dot.pub": [
+          "1.12.12.12",
+          "120.53.53.53"
+        ],
+        "dns.alidns.com": [
+          "223.5.5.5",
+          "223.6.6.6",
+          "2400:3200::1",
+          "2400:3200:baba::1"
+        ],
+        "dns.quad9.net": [
+          "9.9.9.9",
+          "149.112.112.112",
+          "2620:fe::fe",
+          "2620:fe::9"
+        ]
+      },
+      "queryStrategy": "UseIP",
+      "disableFallbackIfMatch": true,
+      "servers": [
+        {
+          "skipFallback": false,
+          "address": "8.8.8.8"
+        }
+      ]
     },
   "stats": {},
   "routing": {
         "balancers": [],
-        "domainStrategy": "AsIs",
         "rules": [
             {
+              "outboundTag": "api",
+              "type": "field",
               "inboundTag": [
                 "api"
-              ],
-              "outboundTag": "api",
-              "type": "field"
+              ]
             },
             {
-              "inboundTag": [
-                "inDns"
-              ],
-              "outboundTag": "outDns",
-              "type": "field"
-            },
-            {
+              "outboundTag": "proxy",
+              "type": "field",
               "inboundTag": [
                 "dnsQuery"
-              ],
-              "outboundTag": "proxy",
-              "type": "field"
+              ]
             },
             {
+              "outboundTag": "direct",
+              "type": "field",
               "inboundTag": [
                 "directSocks"
-              ],
-              "outboundTag": "direct",
-              "type": "field"
+              ]
             }
-          ]
+          ],
+        "domainStrategy": "AsIs"
       },
   "policy": {
+        "system": {
+          "statsInboundUplink": true,
+          "statsInboundDownlink": true,
+          "statsOutboundUplink": true,
+          "statsOutboundDownlink": true
+        },
         "levels": {
           "8": {
-            "handshake": 4,
-            "downlinkOnly": 1,
+            "bufferSize": 0,
+            "statsUserUplink": false,
+            "statsUserDownlink": false,
             "uplinkOnly": 1,
             "connIdle": 30,
-            "statsUserDownlink": false,
-            "bufferSize": 0,
-            "statsUserUplink": false
+            "handshake": 4,
+            "downlinkOnly": 1
           }
-        },
-        "system": {
-          "statsInboundDownlink": true,
-          "statsOutboundDownlink": true,
-          "statsOutboundUplink": true,
-          "statsInboundUplink": true
         }
-      }
+      },
+  "transport": {}
 }
