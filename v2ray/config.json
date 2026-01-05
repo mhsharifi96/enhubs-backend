@@ -57,7 +57,7 @@
           "network": "tcp",
           "tcpSettings": {
             "header": {
-              "type": ""
+              "type": "none"
             }
           }
         },
