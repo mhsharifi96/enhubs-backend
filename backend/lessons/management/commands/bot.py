@@ -15,18 +15,20 @@ class Command(BaseCommand):
         # --- Load Config ---
         BOT_TOKEN = getattr(settings, "TELEGRAM_BOT_TOKEN", None)
         TARGET_CHANNEL_ID = getattr(settings, "TELEGRAM_CHANNEL_ID", None)
-        PROXY_URL = getattr(settings,'PROXY_SOCKS5_URL',None)
+        PROXY_URL = getattr(settings, "PROXY_SOCKS5_URL", None)
+
         async def handle_forward(update: Update, context: ContextTypes.DEFAULT_TYPE):
             message = update.message
 
             await message.reply_text("⏳ Processing your file...")
-            self.stdout.write(f"Processing message {message.message_id} from {message.chat_id}")
+            self.stdout.write(
+                f"Processing message {message.message_id} from {message.chat_id}"
+            )
             # self.stdout.write(f"Message content: {message}")
-            
 
             file = None
             title = ""
-            
+
             if message.audio:
                 file = await message.audio.get_file()
                 title = message.audio.title
@@ -39,33 +41,42 @@ class Command(BaseCommand):
                 result = extract_url_and_filename(message.text)
                 url = result.get("url")
                 title = result.get("title")
-                create_audio_task.delay(title=title, file_name=title, 
-                                    uploaded_path_file= url,
-                                    audio_src=url)
+                create_audio_task.delay(
+                    title=title, file_name=title, uploaded_path_file=url, audio_src=url
+                )
                 await message.reply_text("✅ URL processed and task created. agian!")
                 return
-
 
             else:
                 await message.reply_text("❌ No valid file found in the message.")
                 return
-            file_name = file_name.replace(" ","_")
+            file_name = file_name.replace(" ", "_")
             file_path = f"/tmp/{file_name}"
             await file.download_to_drive(file_path)
-            await message.reply_text(f"✅ File downloaded locally. file title : {title} ")
-            uploaded_path_file=upload_file(file_path)
-            create_audio_task.delay(title=title, file_name=file_name, 
-                                    uploaded_path_file= uploaded_path_file,
-                                    audio_src=uploaded_path_file)
-
-         
+            await message.reply_text(
+                f"✅ File downloaded locally. file title : {title} "
+            )
+            uploaded_path_file = upload_file(file_path)
+            create_audio_task.delay(
+                title=title,
+                file_name=file_name,
+                uploaded_path_file=uploaded_path_file,
+                audio_src=uploaded_path_file,
+            )
 
             os.remove(file_path)
 
             await message.reply_text(f"✅ Uploaded to Ceph!, {uploaded_path_file}")
 
         # --- Start Bot ---
-        app_builder = ApplicationBuilder().token(BOT_TOKEN)
+        app_builder = (
+            ApplicationBuilder()
+            .token(BOT_TOKEN)
+            .connection_pool_size(32)
+            .pool_timeout(20)
+            .get_updates_connection_pool_size(8)
+            .get_updates_pool_timeout(60)
+        )
         print(PROXY_URL)
         print("--------")
         if PROXY_URL:
