@@ -75,4 +75,4 @@ class Command(BaseCommand):
         app.add_handler(MessageHandler(filters.ALL, handle_forward))
 
         self.stdout.write(self.style.SUCCESS("🤖 Telegram bot started..."))
-        app.run_polling()
+        app.run_polling(close_loop=False)
