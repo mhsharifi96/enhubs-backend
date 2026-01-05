@@ -15,8 +15,7 @@ class Command(BaseCommand):
         # --- Load Config ---
         BOT_TOKEN = getattr(settings, "TELEGRAM_BOT_TOKEN", None)
         TARGET_CHANNEL_ID = getattr(settings, "TELEGRAM_CHANNEL_ID", None)
-        PROXY_URL = settings.PROXY_SOCKS5_URL 
-
+        PROXY_URL = getattr(settings,'PROXY_SOCKS5_URL',None)
         async def handle_forward(update: Update, context: ContextTypes.DEFAULT_TYPE):
             message = update.message
 
@@ -67,6 +66,8 @@ class Command(BaseCommand):
 
         # --- Start Bot ---
         app_builder = ApplicationBuilder().token(BOT_TOKEN)
+        print(PROXY_URL)
+        print("--------")
         if PROXY_URL:
             app_builder = app_builder.get_updates_proxy(PROXY_URL).proxy(PROXY_URL)
 
